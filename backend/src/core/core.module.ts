@@ -7,6 +7,8 @@ import { envConfig } from '@/shared/config/env-config';
 import { getGraphQLConfig } from '@/shared/config/graphql.config';
 import { IS_DEV_ENV } from '@/shared/lib/is-dev';
 
+import { RedisModule } from './redis/redis.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -20,6 +22,7 @@ import { IS_DEV_ENV } from '@/shared/lib/is-dev';
       useFactory: getGraphQLConfig,
       inject: [ConfigService],
     }),
+    RedisModule,
   ],
 })
 export class CoreModule {}
