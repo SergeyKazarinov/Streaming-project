@@ -1,0 +1,68 @@
+import { Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import * as bcrypt from 'bcrypt';
+import type { CookieOptions, Request } from 'express';
+
+import { ms, StringValue } from '@/shared/lib/ms';
+import { parseBoolean } from '@/shared/lib/parse-boolean';
+import { prisma } from '@/shared/lib/prisma';
+
+import { LoginInput } from './inputs/login.input';
+
+@Injectable()
+export class SessionService {
+  constructor(private readonly configService: ConfigService) {}
+
+  async login(req: Request, input: LoginInput) {
+    const { login, password } = input;
+
+    const user = await prisma.user.findFirst({
+      where: {
+        OR: [{ username: { equals: login } }, { email: { equals: login } }],
+      },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('Неверный логин или пароль');
+    }
+
+    const isValidPassword = await bcrypt.compare(password, user.password);
+
+    if (!isValidPassword) {
+      throw new UnauthorizedException('Неверный логин или пароль');
+    }
+
+    return new Promise((resolve, reject) => {
+      req.session.createdAt = new Date();
+      req.session.userId = user.id;
+
+      req.session.save((err) => {
+        if (err) {
+          return reject(new InternalServerErrorException('Не удалось сохранить сессию'));
+        }
+        resolve(user);
+      });
+    });
+  }
+
+  async logout(req: Request) {
+    return new Promise((resolve, reject) => {
+      req.session.destroy((err) => {
+        if (err) {
+          return reject(new InternalServerErrorException('Не удалось завершить сессию'));
+        }
+
+        const config: CookieOptions = {
+          domain: this.configService.getOrThrow<string>('SESSION_DOMAIN'),
+          maxAge: ms(this.configService.getOrThrow<StringValue>('SESSION_MAX_AGE')),
+          httpOnly: parseBoolean(this.configService.getOrThrow<string>('SESSION_HTTP_ONLY')),
+          secure: parseBoolean(this.configService.getOrThrow<string>('SESSION_SECURE')),
+          sameSite: 'lax',
+        };
+
+        req.res?.clearCookie(this.configService.getOrThrow<string>('SESSION_NAME'), config);
+        resolve(true);
+      });
+    });
+  }
+}
