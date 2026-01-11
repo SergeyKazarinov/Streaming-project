@@ -1,10 +1,8 @@
 import { Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
-import type { CookieOptions, Request } from 'express';
+import type { Request } from 'express';
 
-import { ms, StringValue } from '@/shared/lib/ms';
-import { parseBoolean } from '@/shared/lib/parse-boolean';
 import { prisma } from '@/shared/lib/prisma';
 
 import { LoginInput } from './inputs/login.input';
@@ -52,15 +50,7 @@ export class SessionService {
           return reject(new InternalServerErrorException('Не удалось завершить сессию'));
         }
 
-        const config: CookieOptions = {
-          domain: this.configService.getOrThrow<string>('SESSION_DOMAIN'),
-          maxAge: ms(this.configService.getOrThrow<StringValue>('SESSION_MAX_AGE')),
-          httpOnly: parseBoolean(this.configService.getOrThrow<string>('SESSION_HTTP_ONLY')),
-          secure: parseBoolean(this.configService.getOrThrow<string>('SESSION_SECURE')),
-          sameSite: 'lax',
-        };
-
-        req.res?.clearCookie(this.configService.getOrThrow<string>('SESSION_NAME'), config);
+        req.res?.clearCookie(this.configService.getOrThrow<string>('SESSION_NAME'));
         resolve(true);
       });
     });
