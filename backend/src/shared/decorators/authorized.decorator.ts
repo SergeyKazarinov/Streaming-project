@@ -1,8 +1,8 @@
 import { createParamDecorator } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import { User } from 'prisma/generated/prisma/client';
+import type { User } from 'prisma/generated/prisma/client';
 
-import { GqlContext } from '../types/gql-context.type';
+import type { GqlContext } from '../types/gql-context.type';
 
 export const Authorized = createParamDecorator<keyof User, User | User[keyof User]>((key, ctx) => {
   let user: User;
