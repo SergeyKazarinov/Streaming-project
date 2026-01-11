@@ -1,6 +1,6 @@
-import { ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
+import { ConflictException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 
+import { hashPassword } from '@/shared/lib/hash-password.util';
 import { prisma } from '@/shared/lib/prisma';
 
 import { CreateUserInput } from './inputs/create-user.input';
@@ -9,10 +9,18 @@ import { CreateUserInput } from './inputs/create-user.input';
 export class AccountService {
   constructor() {}
 
-  async findAll() {
-    const users = await prisma.user.findMany();
+  async me(id: string) {
+    const user = await prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
 
-    return users;
+    if (!user) {
+      throw new NotFoundException('Пользователь не найден');
+    }
+
+    return user;
   }
 
   async create(input: CreateUserInput) {
@@ -34,7 +42,7 @@ export class AccountService {
       throw new ConflictException('Username already exists');
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await hashPassword(password);
     const user = await prisma.user.create({
       data: {
         username,
