@@ -4,6 +4,7 @@ import * as bcrypt from 'bcrypt';
 import type { Request } from 'express';
 
 import { prisma } from '@/shared/lib/prisma';
+import { getSessionMetadata } from '@/shared/lib/session-metadata.util';
 
 import { LoginInput } from './inputs/login.input';
 
@@ -11,7 +12,7 @@ import { LoginInput } from './inputs/login.input';
 export class SessionService {
   constructor(private readonly configService: ConfigService) {}
 
-  async login(req: Request, input: LoginInput) {
+  async login(req: Request, input: LoginInput, userAgent: string) {
     const { login, password } = input;
 
     const user = await prisma.user.findFirst({
@@ -30,9 +31,12 @@ export class SessionService {
       throw new UnauthorizedException('Неверный логин или пароль');
     }
 
+    const metadata = getSessionMetadata(req, userAgent);
+
     return new Promise((resolve, reject) => {
       req.session.createdAt = new Date();
       req.session.userId = user.id;
+      req.session.metadata = metadata;
 
       req.session.save((err) => {
         if (err) {
