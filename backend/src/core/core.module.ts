@@ -11,6 +11,7 @@ import { getGraphQLConfig } from '@/shared/config/graphql.config';
 import { IS_DEV_ENV } from '@/shared/lib/is-dev';
 
 import { PrismaService } from './prisma/prisma.service';
+import { RedisModule } from './redis/redis.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { PrismaService } from './prisma/prisma.service';
       useFactory: getGraphQLConfig,
       inject: [ConfigService],
     }),
+    RedisModule,
     AccountModule,
     SessionModule,
   ],

@@ -21,6 +21,7 @@ export const getSessionMetadata = (req: Request, userAgent: string): SessionMeta
         (typeof req.headers['x-forwarded-for'] === 'string' ? req.headers['x-forwarded-for'].split(',')[0] : req.ip);
 
   const device = new DeviceDetector().parse(userAgent);
+
   const location = ip ? lookup(ip) : null;
 
   return {

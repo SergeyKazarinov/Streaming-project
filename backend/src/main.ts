@@ -4,10 +4,11 @@ import { NestFactory } from '@nestjs/core';
 import { RedisStore } from 'connect-redis';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
-import { createClient } from 'redis';
+import type { RedisClientType } from 'redis';
 
 import { ms, type StringValue } from '@/shared/lib/ms';
 
+import { REDIS_KEY } from './shared/consts/key.cons';
 import { parseBoolean } from './shared/lib/parse-boolean';
 
 import { CoreModule } from '@/core/core.module';
@@ -17,14 +18,7 @@ async function bootstrap() {
 
   const config = app.get(ConfigService);
 
-  const redisClient = createClient({
-    url: config.getOrThrow<string>('REDIS_URL'),
-  });
-
-  await redisClient
-    .connect()
-    .then(() => console.log('Redis connected'))
-    .catch(console.error);
+  const redisClient = app.get<RedisClientType>(REDIS_KEY);
 
   app.use(cookieParser(config.getOrThrow<string>('COOKIE_SECRET')));
 
