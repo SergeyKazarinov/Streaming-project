@@ -1,4 +1,11 @@
-import { ConflictException, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Inject,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import type { Request } from 'express';
@@ -9,6 +16,8 @@ import { prisma } from '@/shared/lib/prisma';
 import { destroySession, saveSession } from '@/shared/lib/session.util';
 import { getSessionMetadata } from '@/shared/lib/session-metadata.util';
 
+import { VerificationService } from '../verification/verification.service';
+
 import { REDIS_KEY } from './../../../shared/consts/key.cons';
 import { LoginInput } from './inputs/login.input';
 
@@ -16,6 +25,7 @@ import { LoginInput } from './inputs/login.input';
 export class SessionService {
   constructor(
     private readonly configService: ConfigService,
+    private readonly verificationService: VerificationService,
     @Inject(REDIS_KEY) private readonly redisClient: RedisClientType,
   ) {}
 
@@ -36,6 +46,12 @@ export class SessionService {
 
     if (!isValidPassword) {
       throw new UnauthorizedException('Неверный логин или пароль');
+    }
+
+    if (!user.isEmailVerified) {
+      await this.verificationService.sendVerificationToken(user);
+
+      throw new BadRequestException('Аккаунт не подтвержден, пожалуйста проверьте свою почту');
     }
 
     const metadata = getSessionMetadata(req, userAgent);

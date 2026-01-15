@@ -3,11 +3,13 @@ import { ConflictException, Injectable, InternalServerErrorException, NotFoundEx
 import { hashPassword } from '@/shared/lib/hash-password.util';
 import { prisma } from '@/shared/lib/prisma';
 
+import { VerificationService } from '../verification/verification.service';
+
 import { CreateUserInput } from './inputs/create-user.input';
 
 @Injectable()
 export class AccountService {
-  constructor() {}
+  constructor(private readonly verificationService: VerificationService) {}
 
   async me(id: string) {
     const user = await prisma.user.findUnique({
@@ -55,6 +57,8 @@ export class AccountService {
     if (!user) {
       throw new InternalServerErrorException('Failed to create user');
     }
+
+    await this.verificationService.sendVerificationToken(user);
 
     return true;
   }

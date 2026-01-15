@@ -1,0 +1,49 @@
+import type { PrismaClient, TokenType, User } from 'prisma/generated/prisma/client';
+import { v4 as uuidv4 } from 'uuid';
+
+export const generateToken = async (prisma: PrismaClient, user: User, type: TokenType, isUUID: boolean = false) => {
+  let token: string;
+
+  if (isUUID) {
+    token = uuidv4();
+  } else {
+    token = Math.floor(Math.random() * (1000000 - 100000) + 100000).toString();
+  }
+
+  const expiresIn = new Date(Date.now() + 1000 * 60 * 60 * 24);
+
+  const existingToken = await prisma.token.findFirst({
+    where: {
+      type,
+      user: {
+        id: user.id,
+      },
+    },
+  });
+
+  if (existingToken) {
+    await prisma.token.delete({
+      where: {
+        id: existingToken.id,
+      },
+    });
+  }
+
+  const newToken = await prisma.token.create({
+    data: {
+      token,
+      type,
+      expiresIn,
+      user: {
+        connect: {
+          id: user.id,
+        },
+      },
+    },
+    include: {
+      user: true,
+    },
+  });
+
+  return newToken;
+};

@@ -5,6 +5,8 @@ import { GraphQLModule } from '@nestjs/graphql';
 
 import { AccountModule } from '@/modules/auth/account/account.module';
 import { SessionModule } from '@/modules/auth/session/session.module';
+import { VerificationModule } from '@/modules/auth/verification/verification.module';
+import { MailModule } from '@/modules/mail/mail.module';
 
 import { envConfig } from '@/shared/config/env-config';
 import { getGraphQLConfig } from '@/shared/config/graphql.config';
@@ -27,6 +29,8 @@ import { RedisModule } from './redis/redis.module';
       inject: [ConfigService],
     }),
     RedisModule,
+    MailModule,
+    VerificationModule,
     AccountModule,
     SessionModule,
   ],
