@@ -43,3 +43,5 @@ export const VerificationTemplate = ({ domain, token }: VerificationTemplateProp
     </Html>
   );
 };
+
+export default VerificationTemplate;
