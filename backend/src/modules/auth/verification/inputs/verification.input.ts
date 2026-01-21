@@ -1,10 +1,13 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsNotEmpty, IsUUID } from 'class-validator';
+
+import { Validator } from '@/shared/decorators/validator.decorator';
 
 @InputType()
 export class VerificationInput {
   @Field(() => String)
-  @IsUUID('4')
-  @IsNotEmpty()
+  @Validator({
+    uuidVersion: '4',
+    isNotEmpty: true,
+  })
   token!: string;
 }
