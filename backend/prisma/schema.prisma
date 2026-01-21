@@ -45,6 +45,7 @@ model Token {
 
 enum TokenType {
   EMAIL_VERIFY
+  RESET_PASSWORD
 
   @@map("token_types")
 }

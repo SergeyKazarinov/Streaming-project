@@ -1,7 +1,7 @@
 import type { PrismaClient, TokenType, User } from 'prisma/generated/prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 
-export const generateToken = async (prisma: PrismaClient, user: User, type: TokenType, isUUID: boolean = false) => {
+export const generateToken = async (prisma: PrismaClient, user: User, type: TokenType, isUUID: boolean = true) => {
   let token: string;
 
   if (isUUID) {
