@@ -3,9 +3,9 @@ import { Field, InputType } from '@nestjs/graphql';
 import { ONLY_LATIN_ALPHABET_REGEX } from '@/shared/consts/regex';
 import { Validator } from '@/shared/decorators/validator.decorator';
 
-@InputType()
+@InputType({ description: 'Создание пользователя при регистрации' })
 export class CreateUserInput {
-  @Field(() => String)
+  @Field(() => String, { description: 'Имя пользователя' })
   @Validator({
     isString: true,
     isNotEmpty: true,
@@ -16,7 +16,7 @@ export class CreateUserInput {
   })
   username!: string;
 
-  @Field(() => String)
+  @Field(() => String, { description: 'Email пользователя' })
   @Validator({
     isString: true,
     isNotEmpty: true,
@@ -24,7 +24,7 @@ export class CreateUserInput {
   })
   email!: string;
 
-  @Field(() => String)
+  @Field(() => String, { description: 'Пароль пользователя' })
   @Validator({
     isString: true,
     isNotEmpty: true,

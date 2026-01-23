@@ -2,9 +2,15 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+"""Создание пользователя при регистрации"""
 input CreateUserInput {
+  """Email пользователя"""
   email: String!
+
+  """Пароль пользователя"""
   password: String!
+
+  """Имя пользователя"""
   username: String!
 }
 
