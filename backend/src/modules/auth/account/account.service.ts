@@ -2,6 +2,7 @@ import { ConflictException, Injectable, InternalServerErrorException, NotFoundEx
 
 import { hashPassword } from '@/shared/lib/hash-password.util';
 import { prisma } from '@/shared/lib/prisma';
+import { secureUser } from '@/shared/lib/secure-user.util';
 
 import { VerificationService } from '../verification/verification.service';
 
@@ -22,7 +23,7 @@ export class AccountService {
       throw new NotFoundException('Пользователь не найден');
     }
 
-    return user;
+    return secureUser(user);
   }
 
   async create(input: CreateUserInput) {
