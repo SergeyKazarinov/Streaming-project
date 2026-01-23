@@ -40,22 +40,35 @@ input LoginInput {
 type Mutation {
   clearSessionCookie: Boolean!
   createUser(data: CreateUserInput!): Boolean!
-  login(data: LoginInput!): UserModel!
+  login(data: LoginInput!): SecureUserModel!
   logout: Boolean!
   removeSession(id: String!): Boolean!
   resetPassword(data: ResetPasswordInput!): Boolean!
   updatePassword(data: UpdatePasswordInput!): Boolean!
-  verifyAccount(data: VerificationInput!): UserModel!
+  verifyAccount(data: VerificationInput!): SecureUserModel!
 }
 
 type Query {
   findCurrentSession: SessionModel!
-  findMe: UserModel!
+  findMe: SecureUserModel!
   findSessionsByUser: [SessionModel!]!
 }
 
 input ResetPasswordInput {
   email: String!
+}
+
+type SecureUserModel {
+  avatar: String
+  bio: String
+  createdAt: DateTime!
+  displayName: String!
+  email: ID!
+  id: ID!
+  isEmailVerified: Boolean!
+  isVerified: Boolean!
+  updatedAt: DateTime!
+  username: String!
 }
 
 type SessionMetadataModel {
@@ -75,20 +88,6 @@ input UpdatePasswordInput {
   confirmPassword: String!
   newPassword: String!
   token: String!
-}
-
-type UserModel {
-  avatar: String
-  bio: String
-  createdAt: DateTime!
-  displayName: String!
-  email: ID!
-  id: ID!
-  isEmailVerified: Boolean!
-  isVerified: Boolean!
-  password: String!
-  updatedAt: DateTime!
-  username: String!
 }
 
 input VerificationInput {

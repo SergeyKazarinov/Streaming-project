@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Field, ID, ObjectType, OmitType } from '@nestjs/graphql';
 import { User } from 'prisma/generated/prisma/client';
 
 @ObjectType()
@@ -36,3 +36,6 @@ export class UserModel implements User {
   @Field(() => Date)
   updatedAt!: Date;
 }
+
+@ObjectType()
+export class SecureUserModel extends OmitType(UserModel, ['password']) {}
