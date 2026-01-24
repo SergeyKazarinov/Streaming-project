@@ -1,11 +1,11 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { Validator } from '@/shared/decorators/validator.decorator';
+import { ValidatorFactory } from '@/shared/decorators/validator-factory.decorator';
 
 @InputType()
 export class ResetPasswordInput {
   @Field(() => String)
-  @Validator({
+  @ValidatorFactory({
     isString: true,
     isNotEmpty: true,
     isEmail: true,

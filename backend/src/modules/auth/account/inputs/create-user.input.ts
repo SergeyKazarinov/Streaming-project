@@ -1,12 +1,12 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 import { ONLY_LATIN_ALPHABET_REGEX } from '@/shared/consts/regex';
-import { Validator } from '@/shared/decorators/validator.decorator';
+import { ValidatorFactory } from '@/shared/decorators/validator-factory.decorator';
 
 @InputType({ description: 'Создание пользователя при регистрации' })
 export class CreateUserInput {
   @Field(() => String, { description: 'Имя пользователя' })
-  @Validator({
+  @ValidatorFactory({
     isString: true,
     isNotEmpty: true,
     matches: {
@@ -17,7 +17,7 @@ export class CreateUserInput {
   username!: string;
 
   @Field(() => String, { description: 'Email пользователя' })
-  @Validator({
+  @ValidatorFactory({
     isString: true,
     isNotEmpty: true,
     isEmail: true,
@@ -25,7 +25,7 @@ export class CreateUserInput {
   email!: string;
 
   @Field(() => String, { description: 'Пароль пользователя' })
-  @Validator({
+  @ValidatorFactory({
     isString: true,
     isNotEmpty: true,
     minLength: 8,

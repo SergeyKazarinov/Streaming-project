@@ -13,7 +13,6 @@ import { SessionData } from 'express-session';
 import { RedisClientType } from 'redis';
 
 import { prisma } from '@/shared/lib/prisma';
-import { secureUser } from '@/shared/lib/secure-user.util';
 import { destroySession, saveSession } from '@/shared/lib/session.util';
 import { getSessionMetadata } from '@/shared/lib/session-metadata.util';
 
@@ -57,7 +56,7 @@ export class SessionService {
 
     const metadata = getSessionMetadata(req, userAgent);
 
-    return secureUser(await saveSession(req, user, metadata));
+    return saveSession(req, user, metadata);
   }
 
   async logout(req: Request) {

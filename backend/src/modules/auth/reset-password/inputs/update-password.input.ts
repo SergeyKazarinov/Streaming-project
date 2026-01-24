@@ -1,12 +1,12 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 import { IsPasswordMatchingConstraint } from '@/shared/decorators/is-password-matching-constraint.decorator';
-import { Validator } from '@/shared/decorators/validator.decorator';
+import { ValidatorFactory } from '@/shared/decorators/validator-factory.decorator';
 
 @InputType()
 export class UpdatePasswordInput {
   @Field(() => String)
-  @Validator({
+  @ValidatorFactory({
     isString: true,
     isNotEmpty: true,
     minLength: 8,
@@ -14,7 +14,7 @@ export class UpdatePasswordInput {
   newPassword!: string;
 
   @Field()
-  @Validator({
+  @ValidatorFactory({
     isString: true,
     isNotEmpty: true,
     minLength: 8,
@@ -23,7 +23,7 @@ export class UpdatePasswordInput {
   confirmPassword!: string;
 
   @Field(() => String)
-  @Validator({
+  @ValidatorFactory({
     uuidVersion: '4',
     isNotEmpty: true,
   })

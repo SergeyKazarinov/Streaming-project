@@ -4,6 +4,7 @@ import type { Request } from 'express';
 import type { User } from 'prisma/generated/prisma/client';
 
 import type { SessionMetadata } from '../types/session-metadata.types';
+
 import { secureUser } from './secure-user.util';
 
 export const saveSession = (req: Request, user: User, metadata: SessionMetadata) => {

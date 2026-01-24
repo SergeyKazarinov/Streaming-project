@@ -15,7 +15,7 @@ interface IValidatorConfig {
   };
 }
 
-class ValidatorFactory {
+class ValidatorFactoryClass {
   static create(config: IValidatorConfig) {
     const decorators: PropertyDecorator[] = [];
 
@@ -70,4 +70,4 @@ class ValidatorFactory {
   }
 }
 
-export const Validator = (config: IValidatorConfig) => ValidatorFactory.create(config);
+export const ValidatorFactory = (config: IValidatorConfig) => ValidatorFactoryClass.create(config);
