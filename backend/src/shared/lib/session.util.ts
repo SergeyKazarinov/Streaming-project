@@ -3,12 +3,14 @@ import type { ConfigService } from '@nestjs/config';
 import type { Request } from 'express';
 import type { User } from 'prisma/generated/prisma/client';
 
+import type { SecureUserModel } from '@/modules/auth/account/models/user.model';
+
 import type { SessionMetadata } from '../types/session-metadata.types';
 
 import { secureUser } from './secure-user.util';
 
 export const saveSession = (req: Request, user: User, metadata: SessionMetadata) => {
-  return new Promise((resolve, reject) => {
+  return new Promise<SecureUserModel>((resolve, reject) => {
     req.session.createdAt = new Date();
     req.session.userId = user.id;
     req.session.metadata = metadata;

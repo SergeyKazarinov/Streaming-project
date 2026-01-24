@@ -1,12 +1,27 @@
 import { applyDecorators } from '@nestjs/common';
 import type { ValidationArguments } from 'class-validator';
-import { IsEmail, IsNotEmpty, IsString, IsUUID, Matches, MinLength, Validate } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+  Length,
+  Matches,
+  MinLength,
+  Validate,
+} from 'class-validator';
 
 interface IValidatorConfig {
   isString?: boolean;
   isNotEmpty?: boolean;
   isEmail?: boolean;
+  isOptional?: boolean;
   minLength?: number;
+  length?: {
+    min: number;
+    max: number;
+  };
   uuidVersion?: Parameters<typeof IsUUID>[0];
   customValidators?: Parameters<typeof Validate>[0][];
   matches?: {
@@ -37,6 +52,10 @@ class ValidatorFactoryClass {
       );
     }
 
+    if (config.isOptional) {
+      decorators.push(IsOptional());
+    }
+
     if (config.minLength) {
       decorators.push(
         MinLength(config.minLength, {
@@ -62,6 +81,15 @@ class ValidatorFactoryClass {
       decorators.push(
         Matches(config.matches.regexp, {
           message: config.matches.message,
+        }),
+      );
+    }
+
+    if (config.length && config.length.min && config.length.max) {
+      decorators.push(
+        Length(config.length.min, config.length.max, {
+          message: ({ property }: ValidationArguments) =>
+            `Поле ${property} должно быть не менее ${config.length!.min} и не более ${config.length!.max} символов`,
         }),
       );
     }

@@ -4,6 +4,10 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 import { prisma } from '../lib/prisma';
 import { GqlContext } from '../types/gql-context.type';
 
+/**
+ * Guard для защиты маршрута
+ * @returns { boolean } true, если пользователь авторизован, false в противном случае
+ */
 @Injectable()
 export class GqlAuthGuard implements CanActivate {
   constructor() {}

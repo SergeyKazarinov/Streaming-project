@@ -6,6 +6,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { AccountModule } from '@/modules/auth/account/account.module';
 import { ResetPasswordModule } from '@/modules/auth/reset-password/reset-password.module';
 import { SessionModule } from '@/modules/auth/session/session.module';
+import { TotpModule } from '@/modules/auth/totp/totp.module';
 import { VerificationModule } from '@/modules/auth/verification/verification.module';
 import { MailModule } from '@/modules/mail/mail.module';
 
@@ -35,6 +36,7 @@ import { RedisModule } from './redis/redis.module';
     AccountModule,
     SessionModule,
     ResetPasswordModule,
+    TotpModule,
   ],
   providers: [PrismaService],
 })

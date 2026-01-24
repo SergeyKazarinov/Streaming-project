@@ -12,10 +12,12 @@ import type { Request } from 'express';
 import { SessionData } from 'express-session';
 import { RedisClientType } from 'redis';
 
+import { generateTotpObject } from '@/shared/lib/generate-totp-object';
 import { prisma } from '@/shared/lib/prisma';
 import { destroySession, saveSession } from '@/shared/lib/session.util';
 import { getSessionMetadata } from '@/shared/lib/session-metadata.util';
 
+import { AuthModel } from '../account/models/auth.model';
 import { VerificationService } from '../verification/verification.service';
 
 import { REDIS_KEY } from './../../../shared/consts/key.cons';
@@ -29,8 +31,10 @@ export class SessionService {
     @Inject(REDIS_KEY) private readonly redisClient: RedisClientType,
   ) {}
 
-  async login(req: Request, input: LoginInput, userAgent: string) {
-    const { login, password } = input;
+  private UNAUTHORIZED_MESSAGE_ERROR = 'Неверный логин или пароль' as const;
+
+  async login(req: Request, input: LoginInput, userAgent: string): Promise<AuthModel> {
+    const { login, password, totpCode } = input;
 
     const user = await prisma.user.findFirst({
       where: {
@@ -39,13 +43,13 @@ export class SessionService {
     });
 
     if (!user) {
-      throw new UnauthorizedException('Неверный логин или пароль');
+      throw new UnauthorizedException(this.UNAUTHORIZED_MESSAGE_ERROR);
     }
 
     const isValidPassword = await bcrypt.compare(password, user.password);
 
     if (!isValidPassword) {
-      throw new UnauthorizedException('Неверный логин или пароль');
+      throw new UnauthorizedException(this.UNAUTHORIZED_MESSAGE_ERROR);
     }
 
     if (!user.isEmailVerified) {
@@ -54,9 +58,27 @@ export class SessionService {
       throw new BadRequestException('Аккаунт не подтвержден, пожалуйста проверьте свою почту');
     }
 
+    if (user.isTotpEnabled) {
+      if (!totpCode) {
+        return {
+          message: 'Двухфакторная аутентификация включена, пожалуйста введите код из приложения',
+        };
+      }
+
+      const totp = generateTotpObject(user.email, user.totpSecret as string); // если флаг isTotpEnabled true, то totpSecret не может быть null
+
+      const delta = totp.validate({ token: totpCode });
+
+      if (delta === null) {
+        throw new BadRequestException('Неверный код');
+      }
+    }
+
     const metadata = getSessionMetadata(req, userAgent);
 
-    return saveSession(req, user, metadata);
+    return {
+      user: await saveSession(req, user, metadata),
+    };
   }
 
   async logout(req: Request) {
