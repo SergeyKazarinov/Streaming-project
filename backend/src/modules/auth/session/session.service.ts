@@ -12,6 +12,7 @@ import type { Request } from 'express';
 import { SessionData } from 'express-session';
 import { RedisClientType } from 'redis';
 
+import { MESSAGE } from '@/shared/consts/message.const';
 import { generateTotpObject } from '@/shared/lib/generate-totp-object';
 import { prisma } from '@/shared/lib/prisma';
 import { destroySession, saveSession } from '@/shared/lib/session.util';
@@ -31,8 +32,6 @@ export class SessionService {
     @Inject(REDIS_KEY) private readonly redisClient: RedisClientType,
   ) {}
 
-  private UNAUTHORIZED_MESSAGE_ERROR = 'Неверный логин или пароль' as const;
-
   async login(req: Request, input: LoginInput, userAgent: string): Promise<AuthModel> {
     const { login, password, totpCode } = input;
 
@@ -43,25 +42,25 @@ export class SessionService {
     });
 
     if (!user) {
-      throw new UnauthorizedException(this.UNAUTHORIZED_MESSAGE_ERROR);
+      throw new UnauthorizedException(MESSAGE.ERROR.UNAUTHORIZED);
     }
 
     const isValidPassword = await bcrypt.compare(password, user.password);
 
     if (!isValidPassword) {
-      throw new UnauthorizedException(this.UNAUTHORIZED_MESSAGE_ERROR);
+      throw new UnauthorizedException(MESSAGE.ERROR.UNAUTHORIZED);
     }
 
     if (!user.isEmailVerified) {
       await this.verificationService.sendVerificationToken(user);
 
-      throw new BadRequestException('Аккаунт не подтвержден, пожалуйста проверьте свою почту');
+      throw new BadRequestException(MESSAGE.ERROR.NOT_VERIFIED);
     }
 
     if (user.isTotpEnabled) {
       if (!totpCode) {
         return {
-          message: 'Двухфакторная аутентификация включена, пожалуйста введите код из приложения',
+          message: MESSAGE.INFO.TOTP_ENABLED,
         };
       }
 
@@ -70,7 +69,7 @@ export class SessionService {
       const delta = totp.validate({ token: totpCode });
 
       if (delta === null) {
-        throw new BadRequestException('Неверный код');
+        throw new BadRequestException(MESSAGE.ERROR.INVALID_TOTP_CODE);
       }
     }
 
@@ -89,7 +88,7 @@ export class SessionService {
     const userId = req.session.userId;
 
     if (!userId) {
-      throw new NotFoundException('Не авторизован');
+      throw new NotFoundException(MESSAGE.ERROR.NOT_AUTHORIZED);
     }
 
     const keys = await this.redisClient.keys('*');
@@ -121,7 +120,7 @@ export class SessionService {
     );
 
     if (!sessionData) {
-      throw new NotFoundException('Сессия не найдена');
+      throw new NotFoundException(MESSAGE.ERROR.NOT_FOUNT_SESSION);
     }
 
     const session = JSON.parse(sessionData) as SessionData;
@@ -140,7 +139,7 @@ export class SessionService {
 
   async remove(req: Request, id: string) {
     if (req.session.id === id) {
-      throw new ConflictException('Текущую сессию удалить нельзя');
+      throw new ConflictException(MESSAGE.ERROR.CONFLICT_REMOVE_SESSION);
     }
 
     await this.redisClient.del(`${this.configService.getOrThrow<string>('SESSION_FOLDER')}${id}`);
