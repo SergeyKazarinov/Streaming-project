@@ -1,22 +1,14 @@
-import {
-  BadRequestException,
-  ConflictException,
-  Inject,
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { BadRequestException, ConflictException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as bcrypt from 'bcrypt';
 import type { Request } from 'express';
 import { SessionData } from 'express-session';
 import { RedisClientType } from 'redis';
 
 import { MESSAGE } from '@/shared/consts/message.const';
 import { generateTotpObject } from '@/shared/lib/generate-totp-object';
-import { prisma } from '@/shared/lib/prisma';
 import { destroySession, saveSession } from '@/shared/lib/session.util';
 import { getSessionMetadata } from '@/shared/lib/session-metadata.util';
+import { BaseUserService } from '@/shared/services/base-user.service';
 
 import { AuthModel } from '../account/models/auth.model';
 import { VerificationService } from '../verification/verification.service';
@@ -25,31 +17,18 @@ import { REDIS_KEY } from './../../../shared/consts/key.cons';
 import { LoginInput } from './inputs/login.input';
 
 @Injectable()
-export class SessionService {
+export class SessionService extends BaseUserService {
   constructor(
     private readonly configService: ConfigService,
     private readonly verificationService: VerificationService,
     @Inject(REDIS_KEY) private readonly redisClient: RedisClientType,
-  ) {}
+  ) {
+    super();
+  }
 
   async login(req: Request, input: LoginInput, userAgent: string): Promise<AuthModel> {
     const { login, password, totpCode } = input;
-
-    const user = await prisma.user.findFirst({
-      where: {
-        OR: [{ username: { equals: login } }, { email: { equals: login } }],
-      },
-    });
-
-    if (!user) {
-      throw new UnauthorizedException(MESSAGE.ERROR.UNAUTHORIZED);
-    }
-
-    const isValidPassword = await bcrypt.compare(password, user.password);
-
-    if (!isValidPassword) {
-      throw new UnauthorizedException(MESSAGE.ERROR.UNAUTHORIZED);
-    }
+    const user = await this.checkUser(login, password);
 
     if (!user.isEmailVerified) {
       await this.verificationService.sendVerificationToken(user);
