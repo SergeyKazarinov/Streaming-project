@@ -1,6 +1,8 @@
 import { Body, Head, Heading, Html, Link, Preview, Section, Tailwind, Text } from '@react-email/components';
 import React from 'react';
 
+import Footer from './components/footer.template';
+
 interface VerificationTemplateProps {
   domain: string;
   token: string;
@@ -28,15 +30,7 @@ export const VerificationTemplate = ({ domain, token }: VerificationTemplateProp
               Подтвердить почту
             </Link>
 
-            <Section className="text-center mt-8">
-              <Text className="text-gray-600">
-                Если у вас есть вопросы или вы столкнулись с трудностями, не стеняйтесь обращаться в нашу службу
-                поддержки по адресу{' '}
-                <Link href={`mailto:kazarinov092@gmail.com`} className="text-[#18b9ae] underline">
-                  kazarinov092@gmail.com
-                </Link>
-              </Text>
-            </Section>
+            <Footer />
           </Section>
         </Body>
       </Tailwind>

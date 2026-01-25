@@ -3,6 +3,9 @@ import React from 'react';
 
 import type { SessionMetadata } from '@/shared/types/session-metadata.types';
 
+import Footer from './components/footer.template';
+import Metadata from './components/metadata.template';
+
 interface ResetPasswordTemplateProps {
   domain: string;
   token: string;
@@ -29,28 +32,9 @@ export const ResetPasswordTemplate = ({ domain, token, metadata }: ResetPassword
               Сбросить пароль
             </Link>
 
-            <Section className="bg-gray-100 rounded-lg p-6 mb-6">
-              <Heading className="text-xl font-semibold text-[#18b9ae]">Информация о запросе:</Heading>
-              <ul className="list-dist list-inside text mt-2 grid-cols-1 px-0">
-                <li>Расположение: {metadata?.location?.country || 'Неизвестно'}</li>
-                <li>Операционная система: {metadata?.device?.os || 'Неизвестно'}</li>
-                <li>Браузер: {metadata?.device?.browser || 'Неизвестно'}</li>
-                <li>IP-адрес: {metadata?.ip || 'Неизвестно'}</li>
-              </ul>
-              <Text className="text-gray-600 mt-2">
-                Если вы не инициировали этот запрос, пожалуйста, игнорируйте это сообщение.
-              </Text>
-            </Section>
+            <Metadata metadata={metadata} />
 
-            <Section className="text-center mt-8">
-              <Text className="text-gray-600">
-                Если у вас есть вопросы или вы столкнулись с трудностями, не стеняйтесь обращаться в нашу службу
-                поддержки по адресу{' '}
-                <Link href={`mailto:kazarinov092@gmail.com`} className="text-[#18b9ae] underline">
-                  kazarinov092@gmail.com
-                </Link>
-              </Text>
-            </Section>
+            <Footer />
           </Section>
         </Body>
       </Tailwind>
