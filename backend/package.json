@@ -20,6 +20,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
+    "update-prisma-client": "prisma generate",
     "email:dev": "NODE_OPTIONS='--experimental-vm-modules' email dev --dir ./src/shared/lib/mail/templates"
   },
   "dependencies": {

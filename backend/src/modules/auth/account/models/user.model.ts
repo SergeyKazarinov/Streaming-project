@@ -21,7 +21,7 @@ export class UserModel extends MetaModel implements User {
   displayName!: string;
 
   @Field(() => String, { nullable: true, description: 'Аватар пользователя' })
-  avatar!: string | null;
+  avatar!: Nullable<string>;
 
   @Field(() => Boolean, { description: 'Статус верификации пользователя' })
   isVerified!: boolean;
@@ -30,13 +30,19 @@ export class UserModel extends MetaModel implements User {
   isTotpEnabled!: boolean;
 
   @Field(() => String, { nullable: true, description: 'Секретный ключ TOTP пользователя' })
-  totpSecret!: string | null;
+  totpSecret!: Nullable<string>;
 
   @Field(() => Boolean, { description: 'Статус верификации пользователя по почте' })
   isEmailVerified!: boolean;
 
+  @Field(() => Boolean, { description: 'Статус деактивации пользователя' })
+  isDeactivated!: boolean;
+
+  @Field(() => Date, { nullable: true, description: 'Дата деактивации пользователя' })
+  deactivatedAt!: Nullable<Date>;
+
   @Field(() => String, { nullable: true, description: 'Биография пользователя' })
-  bio!: string | null;
+  bio!: Nullable<string>;
 }
 
 @ObjectType()

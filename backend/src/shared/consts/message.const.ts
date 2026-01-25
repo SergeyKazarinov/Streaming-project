@@ -6,6 +6,7 @@ export const MESSAGE = {
     NOT_AUTHORIZED: 'Пользователь не авторизован',
     NOT_FOUNT_SESSION: 'Сессия не найдена',
     CONFLICT_REMOVE_SESSION: 'Текущую сессию удалить нельзя',
+    USER_ALREADY_DEACTIVATED: 'Аккаунт уже деактивирован',
   },
   INFO: {
     TOTP_ENABLED: 'Двухфакторная аутентификация включена, пожалуйста введите код из приложения',

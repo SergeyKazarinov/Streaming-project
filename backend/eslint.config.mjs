@@ -31,7 +31,6 @@ export default tseslint.config(
         'error',
         {
           prefer: 'type-imports',
-          disallowTypeAnnotations: false,
         },
       ],
       '@typescript-eslint/no-explicit-any': 'off',

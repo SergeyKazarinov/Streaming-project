@@ -28,6 +28,18 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+"""Форма для деактивации аккаунта"""
+input DeactivateInput {
+  """Код деактивации пользователя"""
+  deactivateToken: String
+
+  """Email пользователя"""
+  email: String!
+
+  """Пароль пользователя"""
+  password: String!
+}
+
 type DeviceModel {
   browser: String!
   os: String!
@@ -55,6 +67,7 @@ input LoginInput {
 type Mutation {
   clearSessionCookie: Boolean!
   createUser(data: CreateUserInput!): Boolean!
+  deactivateAccount(data: DeactivateInput!): AuthModel!
   disableTotp: Boolean!
   enableTotp(input: EnableTotpInput!): Boolean!
   login(data: LoginInput!): AuthModel!
@@ -86,6 +99,9 @@ type SecureUserModel {
   """Дата создания"""
   createdAt: DateTime!
 
+  """Дата деактивации пользователя"""
+  deactivatedAt: DateTime
+
   """Имя пользователя, отображаемое на сайте"""
   displayName: String!
 
@@ -94,6 +110,9 @@ type SecureUserModel {
 
   """ID пользователя"""
   id: ID!
+
+  """Статус деактивации пользователя"""
+  isDeactivated: Boolean!
 
   """Статус верификации пользователя по почте"""
   isEmailVerified: Boolean!
