@@ -28,7 +28,7 @@ export class ResetPasswordService {
       throw new NotFoundException('Пользователь не найден');
     }
 
-    const resetPasswordToken = await generateToken(prisma, user, TokenType.RESET_PASSWORD);
+    const resetPasswordToken = await generateToken({ prisma, user, type: TokenType.RESET_PASSWORD });
 
     const metadata = getSessionMetadata(req, userAgent);
 

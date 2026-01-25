@@ -1,7 +1,33 @@
-import type { PrismaClient, TokenType, User } from 'prisma/generated/prisma/client';
+import type { PrismaClient, Token, TokenType, User } from 'prisma/generated/prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 
-export const generateToken = async (prisma: PrismaClient, user: User, type: TokenType, isUUID: boolean = true) => {
+interface IGenerateTokenConfig {
+  prisma: PrismaClient;
+  user: User;
+  type: TokenType;
+  isUUID?: boolean;
+  expiresInTime?: number;
+}
+
+/**
+ * Функция для генерации токена и сохранения его в базу данных
+ *
+ * @async
+ * @param {IGenerateTokenConfig} config - конфигурация для генерации токена
+ * @param {PrismaClient} prisma - клиент Prisma для работы с базой данных
+ * @param {User} user - объект пользователя
+ * @param {TokenType} type - тип токена
+ * @param {boolean} [isUUID=true] - генерировать UUID или случайное число
+ * @param {number} [expiresInTime=1000 * 60 * 60 * 5] - время истечения токена в миллисекундах
+ * @returns {Promise<Token>} - объект токена
+ */
+export const generateToken = async ({
+  prisma,
+  user,
+  type,
+  isUUID = true,
+  expiresInTime = 1000 * 60 * 60 * 24,
+}: IGenerateTokenConfig): Promise<Token> => {
   let token: string;
 
   if (isUUID) {
@@ -10,7 +36,7 @@ export const generateToken = async (prisma: PrismaClient, user: User, type: Toke
     token = Math.floor(Math.random() * (1000000 - 100000) + 100000).toString();
   }
 
-  const expiresIn = new Date(Date.now() + 1000 * 60 * 60 * 24);
+  const expiresIn = new Date(Date.now() + expiresInTime);
 
   const existingToken = await prisma.token.findFirst({
     where: {
