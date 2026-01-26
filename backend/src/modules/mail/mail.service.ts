@@ -3,9 +3,9 @@ import { ConfigService } from '@nestjs/config';
 import { MailerService } from '@nestjs-modules/mailer';
 import { render } from '@react-email/components';
 
-import DeactivateTemplate from '@/shared/lib/mail/templates/deactivate.template';
-import { ResetPasswordTemplate } from '@/shared/lib/mail/templates/reset-password.template';
-import { VerificationTemplate } from '@/shared/lib/mail/templates/verification.template';
+import DeactivateTemplate from '@/shared/templates/mail/deactivate.template';
+import { ResetPasswordTemplate } from '@/shared/templates/mail/reset-password.template';
+import { VerificationTemplate } from '@/shared/templates/mail/verification.template';
 import { SessionMetadata } from '@/shared/types/session-metadata.types';
 
 @Injectable()
