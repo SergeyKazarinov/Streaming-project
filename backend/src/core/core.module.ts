@@ -9,6 +9,7 @@ import { ResetPasswordModule } from '@/modules/auth/reset-password/reset-passwor
 import { SessionModule } from '@/modules/auth/session/session.module';
 import { TotpModule } from '@/modules/auth/totp/totp.module';
 import { VerificationModule } from '@/modules/auth/verification/verification.module';
+import { CronModule } from '@/modules/cron/cron.module';
 import { MailModule } from '@/modules/mail/mail.module';
 
 import { envConfig } from '@/shared/config/env-config';
@@ -39,6 +40,7 @@ import { RedisModule } from './redis/redis.module';
     ResetPasswordModule,
     TotpModule,
     DeactivateModule,
+    CronModule,
   ],
   providers: [PrismaService],
 })
