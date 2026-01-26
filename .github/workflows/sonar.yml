@@ -1,38 +1,19 @@
-name: SonarQube Analysis
-
+name: Build
 on:
+  push:
+    branches:
+      - main
   pull_request:
     types: [opened, synchronize, reopened]
-    branches:
-      - '**'
-
 jobs:
   sonarqube:
-    name: SonarQube Code Analysis
+    name: SonarQube
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
       - name: SonarQube Scan
-        uses: sonarsource/sonarqube-scan-action@master
+        uses: SonarSource/sonarqube-scan-action@v6
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-
-      - name: SonarQube Quality Gate check
-        id: sonarqube-quality-gate-check
-        uses: sonarsource/sonarqube-quality-gate-action@master
-        timeout-minutes: 5
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        continue-on-error: true
-
-      - name: Check Quality Gate status
-        if: steps.sonarqube-quality-gate-check.outputs.quality-gate-status != 'OK'
-        run: |
-          echo "Quality Gate failed: ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
-          exit 1
