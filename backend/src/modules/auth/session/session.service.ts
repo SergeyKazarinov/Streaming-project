@@ -6,6 +6,7 @@ import { RedisClientType } from 'redis';
 
 import { MESSAGE } from '@/shared/consts/message.const';
 import { generateTotpObject } from '@/shared/lib/generate-totp-object';
+import { prisma } from '@/shared/lib/prisma';
 import { destroySession, saveSession } from '@/shared/lib/session.util';
 import { getSessionMetadata } from '@/shared/lib/session-metadata.util';
 import { BaseUserService } from '@/shared/services/base-user.service';
@@ -51,6 +52,14 @@ export class SessionService extends BaseUserService {
         throw new BadRequestException(MESSAGE.ERROR.INVALID_TOTP_CODE);
       }
     }
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        isDeactivated: false,
+        deactivatedAt: null,
+      },
+    });
 
     const metadata = getSessionMetadata(req, userAgent);
 

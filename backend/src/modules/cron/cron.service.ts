@@ -33,4 +33,22 @@ export class CronService {
       },
     });
   }
+
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  async handleWarnDeleteAccount() {
+    const sixDaysAgo = new Date();
+
+    sixDaysAgo.setDate(sixDaysAgo.getDay() - 6);
+
+    const deletedUsers = await prisma.user.findMany({
+      where: {
+        deactivatedAt: { lte: sixDaysAgo },
+        isDeactivated: true,
+      },
+    });
+
+    for (const user of deletedUsers) {
+      await this.mailService.sendWarnDeletedAccount(user.email);
+    }
+  }
 }

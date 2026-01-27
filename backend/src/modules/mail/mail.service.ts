@@ -7,6 +7,7 @@ import DeactivateTemplate from '@/shared/templates/mail/deactivate.template';
 import { DeletedAccountTemplate } from '@/shared/templates/mail/deleted-account.template';
 import { ResetPasswordTemplate } from '@/shared/templates/mail/reset-password.template';
 import { VerificationTemplate } from '@/shared/templates/mail/verification.template';
+import WarnDeletedAccountTemplate from '@/shared/templates/mail/warn-deleted-account.template';
 import { SessionMetadata } from '@/shared/types/session-metadata.types';
 
 @Injectable()
@@ -46,5 +47,10 @@ export class MailService {
   async sendDeletedAccount(email: string) {
     const html = await render(DeletedAccountTemplate({ domain: this.domain }));
     await this.sendMail(email, 'Аккаунт удален', html);
+  }
+
+  async sendWarnDeletedAccount(email: string) {
+    const html = await render(WarnDeletedAccountTemplate({ domain: this.domain }));
+    await this.sendMail(email, 'Предупреждение об удалении аккаунта', html);
   }
 }
