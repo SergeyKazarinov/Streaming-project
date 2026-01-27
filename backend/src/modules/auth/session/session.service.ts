@@ -2,6 +2,7 @@ import { BadRequestException, ConflictException, Inject, Injectable, NotFoundExc
 import { ConfigService } from '@nestjs/config';
 import type { Request } from 'express';
 import { SessionData } from 'express-session';
+import { TokenType } from 'prisma/generated/prisma/enums';
 import { RedisClientType } from 'redis';
 
 import { MESSAGE } from '@/shared/consts/message.const';
@@ -53,13 +54,22 @@ export class SessionService extends BaseUserService {
       }
     }
 
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        isDeactivated: false,
-        deactivatedAt: null,
-      },
-    });
+    if (user.isDeactivated) {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          isDeactivated: false,
+          deactivatedAt: null,
+        },
+      });
+
+      await prisma.token.deleteMany({
+        where: {
+          userId: user.id,
+          type: TokenType.DEACTIVATE_ACCOUNT,
+        },
+      });
+    }
 
     const metadata = getSessionMetadata(req, userAgent);
 
