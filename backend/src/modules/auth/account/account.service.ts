@@ -1,16 +1,28 @@
-import { ConflictException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { User } from 'prisma/generated/prisma/client';
 
+import { MESSAGE } from '@/shared/consts/message.const';
 import { hashPassword } from '@/shared/lib/hash-password.util';
 import { prisma } from '@/shared/lib/prisma';
 import { secureUser } from '@/shared/lib/secure-user.util';
 
 import { VerificationService } from '../verification/verification.service';
 
+import { ChangeEmailInput } from './inputs/change-email.input';
 import { CreateUserInput } from './inputs/create-user.input';
+import { SecureUserModel } from './models/user.model';
 
 @Injectable()
 export class AccountService {
   constructor(private readonly verificationService: VerificationService) {}
+
+  private async getUserByEmail(email: string): Promise<User | null> {
+    return await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+  }
 
   async me(id: string) {
     const user = await prisma.user.findUnique({
@@ -26,7 +38,7 @@ export class AccountService {
     return secureUser(user);
   }
 
-  async create(input: CreateUserInput) {
+  async create(input: CreateUserInput): Promise<boolean> {
     const { username, email, password } = input;
 
     const isUsernameExists = await prisma.user.findUnique({
@@ -35,14 +47,14 @@ export class AccountService {
       },
     });
 
-    const isEmailExists = await prisma.user.findUnique({
-      where: {
-        email,
-      },
-    });
+    const isEmailExists = await this.getUserByEmail(email);
 
-    if (isUsernameExists || isEmailExists) {
-      throw new ConflictException('Username already exists');
+    if (isUsernameExists) {
+      throw new ConflictException(MESSAGE.ERROR.USERNAME_ALREADY_EXISTS);
+    }
+
+    if (isEmailExists) {
+      throw new ConflictException(MESSAGE.ERROR.EMAIL_ALREADY_EXISTS);
     }
 
     const hashedPassword = await hashPassword(password);
@@ -55,12 +67,32 @@ export class AccountService {
       },
     });
 
-    if (!user) {
-      throw new InternalServerErrorException('Failed to create user');
-    }
-
     await this.verificationService.sendVerificationToken(user);
 
     return true;
+  }
+
+  async changeEmail(user: User, input: ChangeEmailInput): Promise<SecureUserModel> {
+    const { email } = input;
+
+    const isEmailExists = await this.getUserByEmail(email);
+
+    if (isEmailExists) {
+      throw new ConflictException(MESSAGE.ERROR.EMAIL_ALREADY_EXISTS);
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        email,
+        isEmailVerified: false,
+      },
+    });
+
+    await this.verificationService.sendVerificationToken(updatedUser);
+
+    return secureUser(updatedUser);
   }
 }

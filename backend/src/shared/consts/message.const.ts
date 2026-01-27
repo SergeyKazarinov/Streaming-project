@@ -7,6 +7,8 @@ export const MESSAGE = {
     NOT_FOUNT_SESSION: 'Сессия не найдена',
     CONFLICT_REMOVE_SESSION: 'Текущую сессию удалить нельзя',
     USER_ALREADY_DEACTIVATED: 'Аккаунт уже деактивирован',
+    EMAIL_ALREADY_EXISTS: 'Email уже используется',
+    USERNAME_ALREADY_EXISTS: 'Пользователь с таким именем уже существует',
   },
   INFO: {
     TOTP_ENABLED: 'Двухфакторная аутентификация включена, пожалуйста введите код из приложения',

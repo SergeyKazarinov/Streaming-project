@@ -11,6 +11,12 @@ type AuthModel {
   user: SecureUserModel
 }
 
+"""Изменение email пользователя"""
+input ChangeEmailInput {
+  """Новый Email пользователя"""
+  email: String!
+}
+
 """Создание пользователя при регистрации"""
 input CreateUserInput {
   """Email пользователя"""
@@ -65,6 +71,7 @@ input LoginInput {
 }
 
 type Mutation {
+  changeEmail(data: ChangeEmailInput!): SecureUserModel!
   clearSessionCookie: Boolean!
   createUser(data: CreateUserInput!): Boolean!
   deactivateAccount(data: DeactivateInput!): AuthModel!
