@@ -5,6 +5,7 @@ import { Authorization } from '@/shared/decorators/auth.decorator';
 import { Authorized } from '@/shared/decorators/authorized.decorator';
 
 import { ChangeEmailInput } from './inputs/change-email.input';
+import { ChangePasswordInput } from './inputs/change-password.input';
 import { CreateUserInput } from './inputs/create-user.input';
 import { SecureUserModel } from './models/user.model';
 import { AccountService } from './account.service';
@@ -23,6 +24,12 @@ export class AccountResolver {
   @Mutation(() => SecureUserModel, { name: 'changeEmail' })
   async changeEmail(@Authorized() user: User, @Args('data') input: ChangeEmailInput) {
     return this.accountService.changeEmail(user, input);
+  }
+
+  @Authorization()
+  @Mutation(() => SecureUserModel, { name: 'changePassword' })
+  async changePassword(@Authorized() user: User, @Args('data') input: ChangePasswordInput) {
+    return this.accountService.changePassword(user, input);
   }
 
   @Mutation(() => Boolean, { name: 'createUser' })

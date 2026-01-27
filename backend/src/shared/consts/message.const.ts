@@ -9,6 +9,7 @@ export const MESSAGE = {
     USER_ALREADY_DEACTIVATED: 'Аккаунт уже деактивирован',
     EMAIL_ALREADY_EXISTS: 'Email уже используется',
     USERNAME_ALREADY_EXISTS: 'Пользователь с таким именем уже существует',
+    INVALID_OLD_PASSWORD: 'Неверный текущий пароль',
   },
   INFO: {
     TOTP_ENABLED: 'Двухфакторная аутентификация включена, пожалуйста введите код из приложения',

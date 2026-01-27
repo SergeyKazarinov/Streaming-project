@@ -17,6 +17,18 @@ input ChangeEmailInput {
   email: String!
 }
 
+"""Изменение пароля пользователя"""
+input ChangePasswordInput {
+  """Подтверждение нового пароля пользователя"""
+  confirmNewPassword: String!
+
+  """Новый пароль пользователя"""
+  newPassword: String!
+
+  """Текущий пароль пользователя"""
+  oldPassword: String!
+}
+
 """Создание пользователя при регистрации"""
 input CreateUserInput {
   """Email пользователя"""
@@ -72,6 +84,7 @@ input LoginInput {
 
 type Mutation {
   changeEmail(data: ChangeEmailInput!): SecureUserModel!
+  changePassword(data: ChangePasswordInput!): SecureUserModel!
   clearSessionCookie: Boolean!
   createUser(data: CreateUserInput!): Boolean!
   deactivateAccount(data: DeactivateInput!): AuthModel!
