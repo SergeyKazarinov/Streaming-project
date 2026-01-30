@@ -5,6 +5,8 @@ import { SessionData } from 'express-session';
 import { TokenType } from 'prisma/generated/prisma/enums';
 import { RedisClientType } from 'redis';
 
+import { UserRepository } from '@/modules/user/user.repository';
+
 import { MESSAGE } from '@/shared/consts/message.const';
 import { generateTotpObject } from '@/shared/lib/generate-totp-object';
 import { prisma } from '@/shared/lib/prisma';
@@ -23,9 +25,10 @@ export class SessionService extends BaseUserService {
   constructor(
     private readonly configService: ConfigService,
     private readonly verificationService: VerificationService,
+    protected readonly userRepository: UserRepository,
     @Inject(REDIS_KEY) private readonly redisClient: RedisClientType,
   ) {
-    super();
+    super(userRepository);
   }
 
   async login(req: Request, input: LoginInput, userAgent: string): Promise<AuthModel> {
@@ -55,12 +58,9 @@ export class SessionService extends BaseUserService {
     }
 
     if (user.isDeactivated) {
-      await prisma.user.update({
-        where: { id: user.id },
-        data: {
-          isDeactivated: false,
-          deactivatedAt: null,
-        },
+      await this.userRepository.updateUser(user.id, {
+        isDeactivated: false,
+        deactivatedAt: null,
       });
 
       await prisma.token.deleteMany({

@@ -3,6 +3,7 @@ import { Request } from 'express';
 import { TokenType } from 'prisma/generated/prisma/enums';
 
 import { MailService } from '@/modules/mail/mail.service';
+import { UserRepository } from '@/modules/user/user.repository';
 
 import { checkToken } from '@/shared/lib/check-token.util';
 import { generateToken } from '@/shared/lib/generate-token.util';
@@ -15,14 +16,13 @@ import { UpdatePasswordInput } from './inputs/update-password.input';
 
 @Injectable()
 export class ResetPasswordService {
-  constructor(private readonly mailService: MailService) {}
+  constructor(
+    private readonly mailService: MailService,
+    private readonly userRepository: UserRepository,
+  ) {}
 
   async resetPassword(req: Request, input: ResetPasswordInput, userAgent: string) {
-    const user = await prisma.user.findUnique({
-      where: {
-        email: input.email,
-      },
-    });
+    const user = await this.userRepository.findUniqueUserByEmail(input.email);
 
     if (!user) {
       throw new NotFoundException('Пользователь не найден');
@@ -44,9 +44,8 @@ export class ResetPasswordService {
 
     const hashedPassword = await hashPassword(newPassword);
 
-    await prisma.user.update({
-      where: { id: existingToken.userId },
-      data: { password: hashedPassword },
+    await this.userRepository.updateUser(existingToken.userId, {
+      password: hashedPassword,
     });
 
     await prisma.token.delete({

@@ -5,6 +5,7 @@ import { User } from 'prisma/generated/prisma/client';
 import { TokenType } from 'prisma/generated/prisma/enums';
 
 import { MailService } from '@/modules/mail/mail.service';
+import { UserRepository } from '@/modules/user/user.repository';
 
 import { MESSAGE } from '@/shared/consts/message.const';
 import { checkToken } from '@/shared/lib/check-token.util';
@@ -23,16 +24,17 @@ export class DeactivateService extends BaseUserService {
   constructor(
     private readonly mailService: MailService,
     private readonly configService: ConfigService,
+    protected readonly userRepository: UserRepository,
   ) {
-    super();
+    super(userRepository);
   }
 
   private async checkDeactivateToken(req: Request, deactivateToken: string) {
     const existingToken = await checkToken(deactivateToken, TokenType.DEACTIVATE_ACCOUNT);
 
-    await prisma.user.update({
-      where: { id: existingToken.userId },
-      data: { isDeactivated: true, deactivatedAt: new Date() },
+    await this.userRepository.updateUser(existingToken.userId, {
+      isDeactivated: true,
+      deactivatedAt: new Date(),
     });
 
     await prisma.token.delete({

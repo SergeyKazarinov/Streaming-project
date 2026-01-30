@@ -1,22 +1,19 @@
 import { UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 
+import type { UserRepository } from '@/modules/user/user.repository';
+
 import { MESSAGE } from '../consts/message.const';
-import { prisma } from '../lib/prisma';
 
 export class BaseUserService {
-  constructor() {}
+  constructor(protected readonly userRepository: UserRepository) {}
 
   protected async comparePassword(password: string, hashedPassword: string): Promise<boolean> {
     return await bcrypt.compare(password, hashedPassword);
   }
 
   protected async checkUser(loginOrEmail: string, password: string) {
-    const user = await prisma.user.findFirst({
-      where: {
-        OR: [{ username: { equals: loginOrEmail } }, { email: { equals: loginOrEmail } }],
-      },
-    });
+    const user = await this.userRepository.findUserByUsernameOrEmail(loginOrEmail);
 
     if (!user) {
       throw new UnauthorizedException(MESSAGE.ERROR.UNAUTHORIZED);

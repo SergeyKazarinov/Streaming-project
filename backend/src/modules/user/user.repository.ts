@@ -1,12 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { User } from 'prisma/generated/prisma/client';
-import { UserCreateInput, UserUpdateInput } from 'prisma/generated/prisma/models';
+import { UserCreateInput, UserDeleteManyArgs, UserUpdateInput, UserWhereInput } from 'prisma/generated/prisma/models';
 
 import { PrismaService } from '@/core/prisma/prisma.service';
 
 @Injectable()
 export class UserRepository {
   constructor(private readonly prismaService: PrismaService) {}
+
+  async findUserByUsernameOrEmail(usernameOrEmail: string): Promise<User | null> {
+    return await this.prismaService.user.findFirst({
+      where: {
+        OR: [{ username: { equals: usernameOrEmail } }, { email: { equals: usernameOrEmail } }],
+      },
+    });
+  }
 
   async findUniqueUserById(id: string): Promise<User | null> {
     return await this.prismaService.user.findUnique({
@@ -32,6 +40,12 @@ export class UserRepository {
     });
   }
 
+  async findMany(where: UserWhereInput): Promise<User[]> {
+    return await this.prismaService.user.findMany({
+      where,
+    });
+  }
+
   async createUser(user: UserCreateInput): Promise<User> {
     return await this.prismaService.user.create({
       data: user,
@@ -44,6 +58,12 @@ export class UserRepository {
         id,
       },
       data: user,
+    });
+  }
+
+  async deleteMany(where: UserDeleteManyArgs['where']): Promise<void> {
+    await this.prismaService.user.deleteMany({
+      where,
     });
   }
 }

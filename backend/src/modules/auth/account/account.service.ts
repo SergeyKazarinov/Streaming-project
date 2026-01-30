@@ -19,9 +19,9 @@ import { SecureUserModel } from './models/user.model';
 export class AccountService extends BaseUserService {
   constructor(
     private readonly verificationService: VerificationService,
-    private readonly userRepository: UserRepository,
+    protected readonly userRepository: UserRepository,
   ) {
-    super();
+    super(userRepository);
   }
 
   async me(id: string) {

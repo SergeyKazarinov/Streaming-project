@@ -3,14 +3,15 @@ import * as OTPAuth from 'otpauth';
 import { User } from 'prisma/generated/prisma/client';
 import QRCode from 'qrcode';
 
+import { UserRepository } from '@/modules/user/user.repository';
+
 import { generateTotpObject } from '@/shared/lib/generate-totp-object';
-import { prisma } from '@/shared/lib/prisma';
 
 import { EnableTotpInput } from './inputs/enable-totp.input';
 
 @Injectable()
 export class TotpService {
-  constructor() {}
+  constructor(private readonly userRepository: UserRepository) {}
 
   async generateSecret(user: User) {
     const secret = new OTPAuth.Secret({ size: 20 }).base32;
@@ -38,28 +39,18 @@ export class TotpService {
       throw new BadRequestException('Неверный код');
     }
 
-    await prisma.user.update({
-      where: {
-        id: user.id,
-      },
-      data: {
-        isTotpEnabled: true,
-        totpSecret: secret,
-      },
+    await this.userRepository.updateUser(user.id, {
+      isTotpEnabled: true,
+      totpSecret: secret,
     });
 
     return true;
   }
 
   async disableTotp(user: User) {
-    await prisma.user.update({
-      where: {
-        id: user.id,
-      },
-      data: {
-        isTotpEnabled: false,
-        totpSecret: null,
-      },
+    await this.userRepository.updateUser(user.id, {
+      isTotpEnabled: false,
+      totpSecret: null,
     });
 
     return true;

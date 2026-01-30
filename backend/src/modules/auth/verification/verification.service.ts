@@ -4,6 +4,7 @@ import { User } from 'prisma/generated/prisma/client';
 import { TokenType } from 'prisma/generated/prisma/enums';
 
 import { MailService } from '@/modules/mail/mail.service';
+import { UserRepository } from '@/modules/user/user.repository';
 
 import { checkToken } from '@/shared/lib/check-token.util';
 import { generateToken } from '@/shared/lib/generate-token.util';
@@ -15,16 +16,18 @@ import { VerificationInput } from './inputs/verification.input';
 
 @Injectable()
 export class VerificationService {
-  constructor(private readonly mailService: MailService) {}
+  constructor(
+    private readonly mailService: MailService,
+    private readonly userRepository: UserRepository,
+  ) {}
 
   async verify(req: Request, input: VerificationInput, userAgent: string) {
     const { token } = input;
 
     const existingToken = await checkToken(token, TokenType.EMAIL_VERIFY);
 
-    const user = await prisma.user.update({
-      where: { id: existingToken.userId },
-      data: { isEmailVerified: true },
+    const user = await this.userRepository.updateUser(existingToken.userId, {
+      isEmailVerified: true,
     });
 
     await prisma.token.delete({
