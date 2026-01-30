@@ -4,11 +4,11 @@ import { User } from 'prisma/generated/prisma/client';
 import { TokenType } from 'prisma/generated/prisma/enums';
 
 import { MailService } from '@/modules/mail/mail.service';
-import { UserRepository } from '@/modules/user/user.repository';
+import { TokenRepository } from '@/modules/repositories/token/token.repository';
+import { UserRepository } from '@/modules/repositories/user/user.repository';
 
 import { checkToken } from '@/shared/lib/check-token.util';
 import { generateToken } from '@/shared/lib/generate-token.util';
-import { prisma } from '@/shared/lib/prisma';
 import { saveSession } from '@/shared/lib/session.util';
 import { getSessionMetadata } from '@/shared/lib/session-metadata.util';
 
@@ -19,6 +19,7 @@ export class VerificationService {
   constructor(
     private readonly mailService: MailService,
     private readonly userRepository: UserRepository,
+    private readonly tokenRepository: TokenRepository,
   ) {}
 
   async verify(req: Request, input: VerificationInput, userAgent: string) {
@@ -30,11 +31,9 @@ export class VerificationService {
       isEmailVerified: true,
     });
 
-    await prisma.token.delete({
-      where: {
-        id: existingToken.id,
-        type: TokenType.EMAIL_VERIFY,
-      },
+    await this.tokenRepository.delete({
+      id: existingToken.id,
+      type: TokenType.EMAIL_VERIFY,
     });
 
     const metadata = getSessionMetadata(req, userAgent);
@@ -43,7 +42,7 @@ export class VerificationService {
   }
 
   async sendVerificationToken(user: User) {
-    const verificationToken = await generateToken({ prisma, user, type: TokenType.EMAIL_VERIFY });
+    const verificationToken = await generateToken({ user, type: TokenType.EMAIL_VERIFY });
 
     await this.mailService.sendVerificationToken(user.email, verificationToken.token);
 

@@ -1,8 +1,9 @@
-import type { PrismaClient, Token, TokenType, User } from 'prisma/generated/prisma/client';
+import type { Token, TokenType, User } from 'prisma/generated/prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 
+import { prisma } from './prisma';
+
 interface IGenerateTokenConfig {
-  prisma: PrismaClient;
   user: User;
   type: TokenType;
   isUUID?: boolean;
@@ -14,7 +15,6 @@ interface IGenerateTokenConfig {
  *
  * @async
  * @param {IGenerateTokenConfig} config - конфигурация для генерации токена
- * @param {PrismaClient} prisma - клиент Prisma для работы с базой данных
  * @param {User} user - объект пользователя
  * @param {TokenType} type - тип токена
  * @param {boolean} [isUUID=true] - генерировать UUID или случайное число
@@ -22,7 +22,6 @@ interface IGenerateTokenConfig {
  * @returns {Promise<Token>} - объект токена
  */
 export const generateToken = async ({
-  prisma,
   user,
   type,
   isUUID = true,

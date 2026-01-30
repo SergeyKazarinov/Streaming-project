@@ -11,7 +11,7 @@ import { TotpModule } from '@/modules/auth/totp/totp.module';
 import { VerificationModule } from '@/modules/auth/verification/verification.module';
 import { CronModule } from '@/modules/cron/cron.module';
 import { MailModule } from '@/modules/mail/mail.module';
-import { UserModule } from '@/modules/user/user.module';
+import { UserModule } from '@/modules/repositories/user/user.module';
 
 import { envConfig } from '@/shared/config/env-config';
 import { getGraphQLConfig } from '@/shared/config/graphql.config';

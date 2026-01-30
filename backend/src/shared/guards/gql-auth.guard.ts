@@ -1,7 +1,7 @@
 import { type CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
-import { UserRepository } from '@/modules/user/user.repository';
+import { UserRepository } from '@/modules/repositories/user/user.repository';
 
 import { GqlContext } from '../types/gql-context.type';
 

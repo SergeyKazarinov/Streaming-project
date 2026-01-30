@@ -5,12 +5,12 @@ import { User } from 'prisma/generated/prisma/client';
 import { TokenType } from 'prisma/generated/prisma/enums';
 
 import { MailService } from '@/modules/mail/mail.service';
-import { UserRepository } from '@/modules/user/user.repository';
+import { TokenRepository } from '@/modules/repositories/token/token.repository';
+import { UserRepository } from '@/modules/repositories/user/user.repository';
 
 import { MESSAGE } from '@/shared/consts/message.const';
 import { checkToken } from '@/shared/lib/check-token.util';
 import { generateToken } from '@/shared/lib/generate-token.util';
-import { prisma } from '@/shared/lib/prisma';
 import { destroySession } from '@/shared/lib/session.util';
 import { getSessionMetadata } from '@/shared/lib/session-metadata.util';
 import { BaseUserService } from '@/shared/services/base-user.service';
@@ -25,6 +25,7 @@ export class DeactivateService extends BaseUserService {
     private readonly mailService: MailService,
     private readonly configService: ConfigService,
     protected readonly userRepository: UserRepository,
+    private readonly tokenRepository: TokenRepository,
   ) {
     super(userRepository);
   }
@@ -37,11 +38,9 @@ export class DeactivateService extends BaseUserService {
       deactivatedAt: new Date(),
     });
 
-    await prisma.token.delete({
-      where: {
-        id: existingToken.id,
-        type: TokenType.DEACTIVATE_ACCOUNT,
-      },
+    await this.tokenRepository.delete({
+      id: existingToken.id,
+      type: TokenType.DEACTIVATE_ACCOUNT,
     });
 
     await destroySession(req, this.configService);
@@ -49,7 +48,6 @@ export class DeactivateService extends BaseUserService {
 
   private async sendDeactivateToken(req: Request, user: User, userAgent: string) {
     const deactivateToken = await generateToken({
-      prisma,
       user,
       type: TokenType.DEACTIVATE_ACCOUNT,
       isUUID: false,

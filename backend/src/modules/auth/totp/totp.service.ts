@@ -3,7 +3,7 @@ import * as OTPAuth from 'otpauth';
 import { User } from 'prisma/generated/prisma/client';
 import QRCode from 'qrcode';
 
-import { UserRepository } from '@/modules/user/user.repository';
+import { UserRepository } from '@/modules/repositories/user/user.repository';
 
 import { generateTotpObject } from '@/shared/lib/generate-totp-object';
 

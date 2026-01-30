@@ -1,7 +1,7 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { User } from 'prisma/generated/prisma/client';
 
-import { UserRepository } from '@/modules/user/user.repository';
+import { UserRepository } from '@/modules/repositories/user/user.repository';
 
 import { MESSAGE } from '@/shared/consts/message.const';
 import { hashPassword } from '@/shared/lib/hash-password.util';

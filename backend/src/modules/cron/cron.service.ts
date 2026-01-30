@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 
 import { MailService } from '../mail/mail.service';
-import { UserRepository } from '../user/user.repository';
+import { UserRepository } from '../repositories/user/user.repository';
 
 @Injectable()
 export class CronService {

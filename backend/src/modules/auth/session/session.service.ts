@@ -5,11 +5,11 @@ import { SessionData } from 'express-session';
 import { TokenType } from 'prisma/generated/prisma/enums';
 import { RedisClientType } from 'redis';
 
-import { UserRepository } from '@/modules/user/user.repository';
+import { TokenRepository } from '@/modules/repositories/token/token.repository';
+import { UserRepository } from '@/modules/repositories/user/user.repository';
 
 import { MESSAGE } from '@/shared/consts/message.const';
 import { generateTotpObject } from '@/shared/lib/generate-totp-object';
-import { prisma } from '@/shared/lib/prisma';
 import { destroySession, saveSession } from '@/shared/lib/session.util';
 import { getSessionMetadata } from '@/shared/lib/session-metadata.util';
 import { BaseUserService } from '@/shared/services/base-user.service';
@@ -26,6 +26,7 @@ export class SessionService extends BaseUserService {
     private readonly configService: ConfigService,
     private readonly verificationService: VerificationService,
     protected readonly userRepository: UserRepository,
+    private readonly tokenRepository: TokenRepository,
     @Inject(REDIS_KEY) private readonly redisClient: RedisClientType,
   ) {
     super(userRepository);
@@ -63,11 +64,9 @@ export class SessionService extends BaseUserService {
         deactivatedAt: null,
       });
 
-      await prisma.token.deleteMany({
-        where: {
-          userId: user.id,
-          type: TokenType.DEACTIVATE_ACCOUNT,
-        },
+      await this.tokenRepository.deleteMany({
+        userId: user.id,
+        type: TokenType.DEACTIVATE_ACCOUNT,
       });
     }
 

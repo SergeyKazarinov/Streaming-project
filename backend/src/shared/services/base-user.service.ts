@@ -1,7 +1,7 @@
 import { UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 
-import type { UserRepository } from '@/modules/user/user.repository';
+import type { UserRepository } from '@/modules/repositories/user/user.repository';
 
 import { MESSAGE } from '../consts/message.const';
 
