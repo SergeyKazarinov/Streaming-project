@@ -1,9 +1,10 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { User } from 'prisma/generated/prisma/client';
 
+import { UserRepository } from '@/modules/user/user.repository';
+
 import { MESSAGE } from '@/shared/consts/message.const';
 import { hashPassword } from '@/shared/lib/hash-password.util';
-import { prisma } from '@/shared/lib/prisma';
 import { secureUser } from '@/shared/lib/secure-user.util';
 import { BaseUserService } from '@/shared/services/base-user.service';
 
@@ -16,24 +17,15 @@ import { SecureUserModel } from './models/user.model';
 
 @Injectable()
 export class AccountService extends BaseUserService {
-  constructor(private readonly verificationService: VerificationService) {
+  constructor(
+    private readonly verificationService: VerificationService,
+    private readonly userRepository: UserRepository,
+  ) {
     super();
   }
 
-  private async getUserByEmail(email: string): Promise<User | null> {
-    return await prisma.user.findUnique({
-      where: {
-        email,
-      },
-    });
-  }
-
   async me(id: string) {
-    const user = await prisma.user.findUnique({
-      where: {
-        id,
-      },
-    });
+    const user = await this.userRepository.findUniqueUserById(id);
 
     if (!user) {
       throw new NotFoundException('Пользователь не найден');
@@ -45,13 +37,9 @@ export class AccountService extends BaseUserService {
   async create(input: CreateUserInput): Promise<boolean> {
     const { username, email, password } = input;
 
-    const isUsernameExists = await prisma.user.findUnique({
-      where: {
-        username,
-      },
-    });
+    const isUsernameExists = await this.userRepository.findUniqueUserByUsername(username);
 
-    const isEmailExists = await this.getUserByEmail(email);
+    const isEmailExists = await this.userRepository.findUniqueUserByEmail(email);
 
     if (isUsernameExists) {
       throw new ConflictException(MESSAGE.ERROR.USERNAME_ALREADY_EXISTS);
@@ -62,13 +50,11 @@ export class AccountService extends BaseUserService {
     }
 
     const hashedPassword = await hashPassword(password);
-    const user = await prisma.user.create({
-      data: {
-        username,
-        email,
-        password: hashedPassword,
-        displayName: username,
-      },
+    const user = await this.userRepository.createUser({
+      username,
+      email,
+      password: hashedPassword,
+      displayName: username,
     });
 
     await this.verificationService.sendVerificationToken(user);
@@ -79,20 +65,15 @@ export class AccountService extends BaseUserService {
   async changeEmail(user: User, input: ChangeEmailInput): Promise<SecureUserModel> {
     const { email } = input;
 
-    const isEmailExists = await this.getUserByEmail(email);
+    const isEmailExists = await this.userRepository.findUniqueUserByEmail(email);
 
     if (isEmailExists) {
       throw new ConflictException(MESSAGE.ERROR.EMAIL_ALREADY_EXISTS);
     }
 
-    const updatedUser = await prisma.user.update({
-      where: {
-        id: user.id,
-      },
-      data: {
-        email,
-        isEmailVerified: false,
-      },
+    const updatedUser = await this.userRepository.updateUser(user.id, {
+      email,
+      isEmailVerified: false,
     });
 
     await this.verificationService.sendVerificationToken(updatedUser);
@@ -111,13 +92,8 @@ export class AccountService extends BaseUserService {
 
     const hashedPassword = await hashPassword(newPassword);
 
-    const updatedUser = await prisma.user.update({
-      where: {
-        id: user.id,
-      },
-      data: {
-        password: hashedPassword,
-      },
+    const updatedUser = await this.userRepository.updateUser(user.id, {
+      password: hashedPassword,
     });
 
     return secureUser(updatedUser);
