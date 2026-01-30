@@ -11,12 +11,13 @@ import { TotpModule } from '@/modules/auth/totp/totp.module';
 import { VerificationModule } from '@/modules/auth/verification/verification.module';
 import { CronModule } from '@/modules/cron/cron.module';
 import { MailModule } from '@/modules/mail/mail.module';
+import { UserModule } from '@/modules/user/user.module';
 
 import { envConfig } from '@/shared/config/env-config';
 import { getGraphQLConfig } from '@/shared/config/graphql.config';
 import { IS_DEV_ENV } from '@/shared/lib/is-dev';
 
-import { PrismaService } from './prisma/prisma.service';
+import { PrismaModule } from './prisma/prisma.module';
 import { RedisModule } from './redis/redis.module';
 
 @Module({
@@ -33,6 +34,8 @@ import { RedisModule } from './redis/redis.module';
       inject: [ConfigService],
     }),
     RedisModule,
+    PrismaModule,
+    UserModule,
     MailModule,
     VerificationModule,
     AccountModule,
@@ -42,6 +45,5 @@ import { RedisModule } from './redis/redis.module';
     DeactivateModule,
     CronModule,
   ],
-  providers: [PrismaService],
 })
 export class CoreModule {}
