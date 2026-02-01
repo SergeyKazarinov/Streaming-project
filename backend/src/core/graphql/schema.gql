@@ -106,6 +106,7 @@ type Query {
 }
 
 input ResetPasswordInput {
+  """Email пользователя"""
   email: String!
 }
 
@@ -178,7 +179,10 @@ type TotpModel {
 }
 
 input UpdatePasswordInput {
-  confirmPassword: String!
+  """Подтверждение нового пароля пользователя"""
+  confirmNewPassword: String!
+
+  """Новый пароль пользователя"""
   newPassword: String!
   token: String!
 }

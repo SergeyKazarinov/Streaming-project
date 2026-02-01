@@ -1,25 +1,10 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, InputType, PickType } from '@nestjs/graphql';
 
 import { ValidatorFactory } from '@/shared/decorators/validator-factory.decorator';
+import { BaseUserInput } from '@/shared/inputs/base-user.input';
 
 @InputType({ description: 'Форма для деактивации аккаунта' })
-export class DeactivateInput {
-  @Field(() => String, { description: 'Email пользователя' })
-  @ValidatorFactory({
-    isString: true,
-    isNotEmpty: true,
-    isEmail: true,
-  })
-  email!: string;
-
-  @Field(() => String, { description: 'Пароль пользователя' })
-  @ValidatorFactory({
-    isString: true,
-    isNotEmpty: true,
-    minLength: 8,
-  })
-  password!: string;
-
+export class DeactivateInput extends PickType(BaseUserInput, ['email', 'password']) {
   @Field(() => String, { nullable: true, description: 'Код деактивации пользователя' })
   @ValidatorFactory({
     isString: true,
