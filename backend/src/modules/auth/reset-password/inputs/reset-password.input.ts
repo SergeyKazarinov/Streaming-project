@@ -1,14 +1,6 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { InputType, PickType } from '@nestjs/graphql';
 
-import { ValidatorFactory } from '@/shared/decorators/validator-factory.decorator';
+import { BaseUserInput } from '@/shared/inputs/base-user.input';
 
 @InputType()
-export class ResetPasswordInput {
-  @Field(() => String)
-  @ValidatorFactory({
-    isString: true,
-    isNotEmpty: true,
-    isEmail: true,
-  })
-  email!: string;
-}
+export class ResetPasswordInput extends PickType(BaseUserInput, ['email']) {}
