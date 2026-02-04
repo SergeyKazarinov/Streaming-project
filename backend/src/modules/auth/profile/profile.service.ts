@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { FileUpload } from 'graphql-upload-ts';
 import { User } from 'prisma/generated/prisma/client';
 import sharp from 'sharp';
@@ -6,7 +6,10 @@ import sharp from 'sharp';
 import { StorageService } from '@/modules/libs/storage/storage.service';
 import { UserRepository } from '@/modules/repositories/user/user.repository';
 
+import { MESSAGE } from '@/shared/consts/message.const';
 import { MimeType } from '@/shared/types/mime.type';
+
+import { ChangeProfileInput } from './inputs/change-profile.input';
 
 @Injectable()
 export class ProfileService {
@@ -51,6 +54,20 @@ export class ProfileService {
     }
 
     const updatedUser = await this.userRepository.updateUser(user.id, { avatar: null });
+
+    return updatedUser;
+  }
+
+  async changeInfoUser(user: User, input: ChangeProfileInput) {
+    const { username, displayName, bio } = input;
+
+    const isUsernameExists = await this.userRepository.findUniqueUserByUsername(username);
+
+    if (isUsernameExists && username !== user.username) {
+      throw new ConflictException(MESSAGE.ERROR.USERNAME_ALREADY_EXISTS);
+    }
+
+    const updatedUser = await this.userRepository.updateUser(user.id, { username, displayName, bio });
 
     return updatedUser;
   }

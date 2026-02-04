@@ -8,13 +8,14 @@ import { FileValidationPipe } from '@/shared/pipes/file-validation.pipe';
 
 import { SecureUserModel } from '../account/models/user.model';
 
+import { ChangeProfileInput } from './inputs/change-profile.input';
 import { ProfileService } from './profile.service';
 
-@Resolver()
+@Resolver('Profile')
+@Authorization()
 export class ProfileResolver {
   constructor(private readonly profileService: ProfileService) {}
 
-  @Authorization()
   @Mutation(() => SecureUserModel, { name: 'changeAvatar' })
   async changeAvatar(
     @Authorized() user: User,
@@ -23,9 +24,13 @@ export class ProfileResolver {
     return await this.profileService.changeAvatar(user, file);
   }
 
-  @Authorization()
   @Mutation(() => SecureUserModel, { name: 'removeAvatar' })
   async removeAvatar(@Authorized() user: User) {
     return await this.profileService.removeAvatar(user);
+  }
+
+  @Mutation(() => SecureUserModel, { name: 'changeInfoUser' })
+  async changeInfoUser(@Authorized() user: User, @Args('data') input: ChangeProfileInput) {
+    return await this.profileService.changeInfoUser(user, input);
   }
 }

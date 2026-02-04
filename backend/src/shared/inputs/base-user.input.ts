@@ -31,4 +31,20 @@ export class BaseUserInput {
     minLength: 8,
   })
   password!: string;
+
+  @Field(() => String, { description: 'Имя пользователя, отображаемое на сайте' })
+  @ValidatorFactory({
+    isString: true,
+    isNotEmpty: true,
+  })
+  displayName!: string;
+
+  @Field(() => String, { description: 'Биография пользователя' })
+  @ValidatorFactory({
+    isString: true,
+    isNotEmpty: true,
+    maxLength: 255,
+    isOptional: true,
+  })
+  bio?: string;
 }
