@@ -10,6 +10,7 @@ import { SessionModule } from '@/modules/auth/session/session.module';
 import { TotpModule } from '@/modules/auth/totp/totp.module';
 import { VerificationModule } from '@/modules/auth/verification/verification.module';
 import { CronModule } from '@/modules/cron/cron.module';
+import { StorageModule } from '@/modules/libs/storage/storage.module';
 import { MailModule } from '@/modules/mail/mail.module';
 import { UserModule } from '@/modules/repositories/user/user.module';
 
@@ -44,6 +45,7 @@ import { RedisModule } from './redis/redis.module';
     TotpModule,
     DeactivateModule,
     CronModule,
+    StorageModule,
   ],
 })
 export class CoreModule {}

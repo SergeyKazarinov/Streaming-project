@@ -4,6 +4,7 @@ import { NestFactory } from '@nestjs/core';
 import { RedisStore } from 'connect-redis';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
+import { graphqlUploadExpress } from 'graphql-upload-ts';
 import type { RedisClientType } from 'redis';
 
 import { ms, type StringValue } from '@/shared/lib/ms';
@@ -22,8 +23,18 @@ async function bootstrap() {
 
   app.use(cookieParser(config.getOrThrow<string>('COOKIE_SECRET')));
 
+  app.use(
+    '/graphql',
+    graphqlUploadExpress({
+      maxFieldSize: 100 * 1024 * 1024, // 100MB,
+      maxFiles: 5,
+      overrideSendResponse: false,
+    }),
+  );
+
   app.useGlobalPipes(
     new ValidationPipe({
+      whitelist: true,
       transform: true,
     }),
   );
