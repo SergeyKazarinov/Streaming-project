@@ -8,6 +8,7 @@ import {
   IsUUID,
   Length,
   Matches,
+  MaxLength,
   MinLength,
   Validate,
 } from 'class-validator';
@@ -18,6 +19,7 @@ interface IValidatorConfig {
   isEmail?: boolean;
   isOptional?: boolean;
   minLength?: number;
+  maxLength?: number;
   length?: {
     min: number;
     max: number;
@@ -61,6 +63,15 @@ class ValidatorFactoryClass {
         MinLength(config.minLength, {
           message: ({ property }: ValidationArguments) =>
             `Поле ${property} должно быть не менее ${config.minLength} символов`,
+        }),
+      );
+    }
+
+    if (config.maxLength) {
+      decorators.push(
+        MaxLength(config.maxLength, {
+          message: ({ property }: ValidationArguments) =>
+            `Поле ${property} должно быть не более ${config.maxLength} символов`,
         }),
       );
     }
