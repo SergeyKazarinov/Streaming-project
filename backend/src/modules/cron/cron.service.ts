@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 
+import { StorageService } from '../libs/storage/storage.service';
 import { MailService } from '../mail/mail.service';
 import { UserRepository } from '../repositories/user/user.repository';
 
@@ -9,6 +10,7 @@ export class CronService {
   constructor(
     private readonly mailService: MailService,
     private readonly userRepository: UserRepository,
+    private readonly storageService: StorageService,
   ) {}
 
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
@@ -24,6 +26,10 @@ export class CronService {
 
     for (const user of deletedUsers) {
       await this.mailService.sendDeletedAccount(user.email);
+
+      if (user.avatar) {
+        await this.storageService.deleteFile(user.avatar);
+      }
     }
 
     await this.userRepository.deleteMany({
