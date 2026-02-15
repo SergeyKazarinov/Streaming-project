@@ -1,6 +1,8 @@
 import { Field, ID, ObjectType, OmitType } from '@nestjs/graphql';
 import { User } from 'prisma/generated/prisma/client';
 
+import { SocialLinkModel } from '@/modules/social/models/social-link.model';
+
 import { MetaModel } from '@/shared/models/meta.model';
 
 @ObjectType({ description: 'Модель пользователя' })
@@ -43,6 +45,9 @@ export class UserModel extends MetaModel implements User {
 
   @Field(() => String, { nullable: true, description: 'Биография пользователя' })
   bio!: Nullable<string>;
+
+  @Field(() => [SocialLinkModel], { description: 'Социальные ссылки пользователя' })
+  socialLinks?: SocialLinkModel[];
 }
 
 @ObjectType()

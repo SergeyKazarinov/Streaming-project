@@ -40,6 +40,14 @@ input ChangeProfileInput {
   username: String!
 }
 
+input CreateSocialLinkInput {
+  """Название ссылки"""
+  title: String!
+
+  """URL ссылки"""
+  url: String!
+}
+
 """Создание пользователя при регистрации"""
 input CreateUserInput {
   """Email пользователя"""
@@ -99,6 +107,7 @@ type Mutation {
   changeInfoUser(data: ChangeProfileInput!): SecureUserModel!
   changePassword(data: ChangePasswordInput!): SecureUserModel!
   clearSessionCookie: Boolean!
+  createSocialLink(data: CreateSocialLinkInput!): SocialLinkModel!
   createUser(data: CreateUserInput!): Boolean!
   deactivateAccount(data: DeactivateInput!): AuthModel!
   disableTotp: Boolean!
@@ -107,8 +116,11 @@ type Mutation {
   logout: Boolean!
   removeAvatar: SecureUserModel!
   removeSession(id: String!): Boolean!
+  removeSocialLink(data: RemoveSocialLinkInput!): Boolean!
+  reorderSocialLinks(data: [ReorderSocialLinkInput!]!): [SocialLinkModel!]!
   resetPassword(data: ResetPasswordInput!): Boolean!
   updatePassword(data: UpdatePasswordInput!): Boolean!
+  updateSocialLink(data: UpdateSocialLinkInput!): SocialLinkModel!
   verifyAccount(data: VerificationInput!): SecureUserModel!
 }
 
@@ -116,7 +128,21 @@ type Query {
   findCurrentSession: SessionModel!
   findMe: SecureUserModel!
   findSessionsByUser: [SessionModel!]!
+  findSocialLinksByUser: [SocialLinkModel!]!
   generateSecret: TotpModel!
+}
+
+input RemoveSocialLinkInput {
+  """id социальной ссылки"""
+  id: String!
+}
+
+input ReorderSocialLinkInput {
+  """id социальной ссылки"""
+  id: String!
+
+  """Порядковый номер"""
+  order: Float!
 }
 
 input ResetPasswordInput {
@@ -158,6 +184,9 @@ type SecureUserModel {
   """Статус верификации пользователя"""
   isVerified: Boolean!
 
+  """Социальные ссылки пользователя"""
+  socialLinks: [SocialLinkModel!]!
+
   """Секретный ключ TOTP пользователя"""
   totpSecret: String
 
@@ -181,6 +210,27 @@ type SessionModel {
   userId: String!
 }
 
+type SocialLinkModel {
+  """Дата создания"""
+  createdAt: DateTime!
+  id: ID!
+
+  """Порядковый номер"""
+  order: Float!
+
+  """Название социальной сети"""
+  title: String!
+
+  """Дата обновления"""
+  updatedAt: DateTime!
+
+  """URL социальной сети"""
+  url: String!
+
+  """Пользователь"""
+  user: SecureUserModel!
+}
+
 """
 Модель TOTP для генерации секретного ключа и QR-кода. Используется для включения TOTP
 """
@@ -199,6 +249,20 @@ input UpdatePasswordInput {
   """Новый пароль пользователя"""
   newPassword: String!
   token: String!
+}
+
+input UpdateSocialLinkInput {
+  """id социальной ссылки"""
+  id: String!
+
+  """Порядковый номер"""
+  order: Float
+
+  """Название ссылки"""
+  title: String
+
+  """URL ссылки"""
+  url: String
 }
 
 """The `Upload` scalar type represents a file upload."""

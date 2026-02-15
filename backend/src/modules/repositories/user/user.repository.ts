@@ -13,6 +13,9 @@ export class UserRepository {
       where: {
         OR: [{ username: { equals: usernameOrEmail } }, { email: { equals: usernameOrEmail } }],
       },
+      include: {
+        socialLinks: true,
+      },
     });
   }
 
@@ -20,6 +23,9 @@ export class UserRepository {
     return await this.prismaService.user.findUnique({
       where: {
         id,
+      },
+      include: {
+        socialLinks: true,
       },
     });
   }
@@ -29,6 +35,9 @@ export class UserRepository {
       where: {
         username,
       },
+      include: {
+        socialLinks: true,
+      },
     });
   }
 
@@ -36,6 +45,9 @@ export class UserRepository {
     return await this.prismaService.user.findUnique({
       where: {
         email,
+      },
+      include: {
+        socialLinks: true,
       },
     });
   }

@@ -18,6 +18,7 @@ model User {
   bio             String?
 
   tokens          Token[]
+  socialLinks     SocialLink[]
 
   isTotpEnabled   Boolean  @default(false) @map("is_totp_enabled")
   totpSecret      String?  @map("totp_secret")
@@ -47,6 +48,22 @@ model Token {
   userId        String   @map("user_id")
 
   @@map("tokens")
+}
+
+model SocialLink {
+  id            String @id @default(uuid())
+
+  title         String @map("title")
+  url           String
+  order         Int @map("order")
+
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  @@map("social_links")
 }
 
 enum TokenType {
