@@ -3,8 +3,10 @@ import type { ValidationArguments } from 'class-validator';
 import {
   IsEmail,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
+  IsUrl,
   IsUUID,
   Length,
   Matches,
@@ -15,6 +17,8 @@ import {
 
 interface IValidatorConfig {
   isString?: boolean;
+  isNumber?: boolean;
+  isUrl?: boolean;
   isNotEmpty?: boolean;
   isEmail?: boolean;
   isOptional?: boolean;
@@ -39,6 +43,18 @@ class ValidatorFactoryClass {
     if (config.isString) {
       decorators.push(
         IsString({ message: ({ property }: ValidationArguments) => `Поле ${property} должно быть строкой` }),
+      );
+    }
+
+    if (config.isNumber) {
+      decorators.push(
+        IsNumber({}, { message: ({ property }: ValidationArguments) => `Поле ${property} должно быть числом` }),
+      );
+    }
+
+    if (config.isUrl) {
+      decorators.push(
+        IsUrl({}, { message: ({ property }: ValidationArguments) => `Поле ${property} должно быть числом` }),
       );
     }
 
