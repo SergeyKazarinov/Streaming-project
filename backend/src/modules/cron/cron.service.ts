@@ -40,12 +40,12 @@ export class CronService {
 
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async handleWarnDeleteAccount() {
-    const sixDaysAgo = new Date();
+    const sixDaysAgo = new Date(new Date().setDate(new Date().getDate() - 6));
 
-    sixDaysAgo.setDate(sixDaysAgo.getDay() - 6);
+    const sevenDaysAgo = new Date(new Date().setDate(new Date().getDate() - 7));
 
     const deletedUsers = await this.userRepository.findMany({
-      deactivatedAt: { lte: sixDaysAgo },
+      deactivatedAt: { lte: sixDaysAgo, gte: sevenDaysAgo },
       isDeactivated: true,
     });
 
