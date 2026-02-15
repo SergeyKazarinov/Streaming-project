@@ -1,0 +1,17 @@
+export const userMock = {
+  id: 'a062bece-16eb-4693-850d-f192ac281d9b',
+  email: 'user@example.com',
+  username: 'user',
+  displayName: 'User',
+  password: 'hash',
+  avatar: null,
+  bio: null,
+  isTotpEnabled: false,
+  totpSecret: null,
+  isVerified: true,
+  isEmailVerified: true,
+  isDeactivated: false,
+  deactivatedAt: null,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+};
