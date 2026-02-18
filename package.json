@@ -1,0 +1,34 @@
+{
+  "name": "streaming-project",
+  "version": "0.0.1",
+  "scripts": {
+    "install:all": "yarn install && cd backend && yarn install && cd ..",
+    "prepare": "husky",
+    "semantic-release": "semantic-release"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SergeyKazarinov/Streaming-project.git"
+  },
+  "author": "Sergey Kazarinov <kazarinov092@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SergeyKazarinov/Streaming-project/issues"
+  },
+  "homepage": "https://github.com/SergeyKazarinov/Streaming-project#readme",
+  "description": "",
+  "packageManager": "yarn@4.12.0+sha512.f45ab632439a67f8bc759bf32ead036a1f413287b9042726b7cc4818b7b49e14e9423ba49b18f9e06ea4941c1ad062385b1d8760a8d5091a1a31e5f6219afca8",
+  "devDependencies": {
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/commit-analyzer": "^13.0.1",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^12.0.6",
+    "@semantic-release/npm": "^13.1.4",
+    "@semantic-release/release-notes-generator": "^14.1.0",
+    "conventional-changelog-conventionalcommits": "^9.1.0",
+    "conventional-changelog-eslint": "^6.0.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "semantic-release": "^25.0.3"
+  }
+}
