@@ -1,18 +1,19 @@
-import { Field, ID } from '@nestjs/graphql';
+import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { Stream } from 'prisma/generated/prisma/browser';
 
 import { SecureUserModel } from '@/modules/auth/account/models/user.model';
 
 import { MetaModel } from '@/shared/models/meta.model';
 
+@ObjectType()
 export class StreamModel extends MetaModel implements Stream {
   @Field(() => ID)
   id!: string;
 
-  @Field(() => String)
+  @Field(() => String, { description: 'Название стрима' })
   title!: string;
 
-  @Field(() => String, { nullable: true })
+  @Field(() => String, { nullable: true, description: 'URL thumbnail стрима' })
   thumbnailUrl!: Nullable<string>;
 
   @Field(() => String, { nullable: true })
@@ -24,12 +25,12 @@ export class StreamModel extends MetaModel implements Stream {
   @Field(() => String, { nullable: true })
   streamKey!: Nullable<string>;
 
-  @Field(() => Boolean)
+  @Field(() => Boolean, { description: 'Стрим в прямом эфире' })
   isLive!: boolean;
 
-  @Field(() => SecureUserModel)
+  @Field(() => SecureUserModel, { description: 'Владелец стрима' })
   user!: SecureUserModel;
 
-  @Field(() => String)
+  @Field(() => String, { description: 'ID владельца стрима' })
   userId!: string;
 }

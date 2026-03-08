@@ -88,6 +88,17 @@ input EnableTotpInput {
   totpToken: String!
 }
 
+input FiltersInput {
+  """Количество записей, которые необходимо вернуть"""
+  limit: Float
+
+  """Количество записей, которые необходимо пропустить"""
+  offset: Float
+
+  """Поле поиска"""
+  searchTerm: String
+}
+
 type LocationModel {
   city: String!
   country: String!
@@ -125,6 +136,7 @@ type Mutation {
 }
 
 type Query {
+  findAllStreams(input: FiltersInput!): [StreamModel!]!
   findCurrentSession: SessionModel!
   findMe: SecureUserModel!
   findSessionsByUser: [SessionModel!]!
@@ -187,6 +199,9 @@ type SecureUserModel {
   """Социальные ссылки пользователя"""
   socialLinks: [SocialLinkModel!]!
 
+  """Стрим пользователя"""
+  stream: StreamModel
+
   """Секретный ключ TOTP пользователя"""
   totpSecret: String
 
@@ -229,6 +244,33 @@ type SocialLinkModel {
 
   """Пользователь"""
   user: SecureUserModel!
+}
+
+type StreamModel {
+  """Дата создания"""
+  createdAt: DateTime!
+  id: ID!
+  ingressId: String
+
+  """Стрим в прямом эфире"""
+  isLive: Boolean!
+  serverUrl: String
+  streamKey: String
+
+  """URL thumbnail стрима"""
+  thumbnailUrl: String
+
+  """Название стрима"""
+  title: String!
+
+  """Дата обновления"""
+  updatedAt: DateTime!
+
+  """Владелец стрима"""
+  user: SecureUserModel!
+
+  """ID владельца стрима"""
+  userId: String!
 }
 
 """
