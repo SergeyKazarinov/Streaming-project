@@ -16,6 +16,7 @@ import { MailModule } from '@/modules/mail/mail.module';
 import { SocialLinksModule } from '@/modules/repositories/social/social-links.module';
 import { UserModule } from '@/modules/repositories/user/user.module';
 import { SocialModule } from '@/modules/social/social.module';
+import { StreamModule } from '@/modules/stream/stream.module';
 
 import { envConfig } from '@/shared/config/env-config';
 import { getGraphQLConfig } from '@/shared/config/graphql.config';
@@ -52,6 +53,7 @@ import { RedisModule } from './redis/redis.module';
     ProfileModule,
     SocialModule,
     SocialLinksModule,
+    StreamModule,
   ],
 })
 export class CoreModule {}

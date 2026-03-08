@@ -1,6 +1,6 @@
 generator client {
-  provider = "prisma-client"
-  output   = "./generated/prisma"
+  provider     = "prisma-client"
+  output       = "./generated/prisma"
   moduleFormat = "cjs"
 }
 
@@ -9,61 +9,68 @@ datasource db {
 }
 
 model User {
-  id              String   @id @default(uuid())
-  email           String   @unique
+  id              String       @id @default(uuid())
+  email           String       @unique
   password        String
-  username        String   @unique
-  displayName     String   @map("display_name")
+  username        String       @unique
+  displayName     String       @map("display_name")
   avatar          String?
   bio             String?
-
   tokens          Token[]
   socialLinks     SocialLink[]
-
-  isTotpEnabled   Boolean  @default(false) @map("is_totp_enabled")
-  totpSecret      String?  @map("totp_secret")
-
-  isVerified      Boolean  @default(false) @map("is_verified")
-  isEmailVerified Boolean  @default(false) @map("is_email_verified")
-
-  isDeactivated   Boolean  @default(false) @map("is_deactivated")
-  deactivatedAt   DateTime? @map("deactivated_at")
-
-  createdAt       DateTime @default(now()) @map("created_at")
-  updatedAt       DateTime @updatedAt @map("updated_at")
+  stream          Stream?
+  isTotpEnabled   Boolean      @default(false) @map("is_totp_enabled")
+  totpSecret      String?      @map("totp_secret")
+  isVerified      Boolean      @default(false) @map("is_verified")
+  isEmailVerified Boolean      @default(false) @map("is_email_verified")
+  isDeactivated   Boolean      @default(false) @map("is_deactivated")
+  deactivatedAt   DateTime?    @map("deactivated_at")
+  createdAt       DateTime     @default(now()) @map("created_at")
+  updatedAt       DateTime     @updatedAt @map("updated_at")
 
   @@map("users")
 }
 
 model Token {
-  id            String   @id @default(uuid())
-
-  token         String   @unique
-  type          TokenType
-  expiresIn     DateTime @map("expires_in")
-  createdAt     DateTime @default(now()) @map("created_at")
-  updatedAt     DateTime @updatedAt @map("updated_at")
-
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId        String   @map("user_id")
+  id        String    @id @default(uuid())
+  token     String    @unique
+  type      TokenType
+  expiresIn DateTime  @map("expires_in")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String    @map("user_id")
 
   @@map("tokens")
 }
 
 model SocialLink {
-  id            String @id @default(uuid())
-
-  title         String @map("title")
-  url           String
-  order         Int @map("order")
-
-  createdAt     DateTime @default(now()) @map("created_at")
-  updatedAt     DateTime @updatedAt @map("updated_at")
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String
+  id        String   @id @default(uuid())
+  title     String   @map("title")
+  url       String
+  order     Int      @map("order")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
 
   @@map("social_links")
+}
+
+model Stream {
+  id           String   @id @default(uuid())
+  title        String
+  thumbnailUrl String?  @map("thumbnail_url")
+  ingressId    String?  @unique @map("ingress_id")
+  serverUrl    String?  @map("server_url")
+  streamKey    String?  @map("stream_key")
+  isLive       Boolean  @default(false) @map("is_live")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String   @unique @map("user_id")
+
+  @@map("streams")
 }
 
 enum TokenType {

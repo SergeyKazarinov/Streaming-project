@@ -55,6 +55,11 @@ export class AccountService extends BaseUserService {
       email,
       password: hashedPassword,
       displayName: username,
+      stream: {
+        create: {
+          title: `Стрим ${username}`,
+        },
+      },
     });
 
     await this.verificationService.sendVerificationToken(user);

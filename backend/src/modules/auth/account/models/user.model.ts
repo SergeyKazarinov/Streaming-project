@@ -2,6 +2,7 @@ import { Field, ID, ObjectType, OmitType } from '@nestjs/graphql';
 import { User } from 'prisma/generated/prisma/client';
 
 import { SocialLinkModel } from '@/modules/social/models/social-link.model';
+import { StreamModel } from '@/modules/stream/model/stream.model';
 
 import { MetaModel } from '@/shared/models/meta.model';
 
@@ -48,6 +49,9 @@ export class UserModel extends MetaModel implements User {
 
   @Field(() => [SocialLinkModel], { description: 'Социальные ссылки пользователя' })
   socialLinks?: SocialLinkModel[];
+
+  @Field(() => StreamModel, { nullable: true, description: 'Стрим пользователя' })
+  stream?: StreamModel;
 }
 
 @ObjectType()
