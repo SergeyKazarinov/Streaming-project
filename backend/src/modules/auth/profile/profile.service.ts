@@ -53,6 +53,8 @@ export class ProfileService {
       return;
     }
 
+    await this.storageService.deleteFile(user.avatar);
+
     const updatedUser = await this.userRepository.updateUser(user.id, { avatar: null });
 
     return updatedUser;
