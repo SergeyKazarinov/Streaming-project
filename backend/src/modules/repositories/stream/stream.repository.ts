@@ -61,4 +61,14 @@ export class StreamRepository {
 
     return streams;
   }
+
+  async getTotalCountStream(): Promise<number> {
+    return await this.prismaService.stream.count({
+      where: {
+        user: {
+          isDeactivated: false,
+        },
+      },
+    });
+  }
 }

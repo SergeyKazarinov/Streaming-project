@@ -13,4 +13,9 @@ export class StreamResolver {
   async findAllStreams(@Args('input', { type: () => FiltersInput }) input: FiltersInput) {
     return await this.streamService.findAll(input);
   }
+
+  @Query(() => [StreamModel], { name: 'findRandomStreams' })
+  async findRandomStreams() {
+    return await this.streamService.findRandomStream();
+  }
 }

@@ -139,6 +139,7 @@ type Query {
   findAllStreams(input: FiltersInput!): [StreamModel!]!
   findCurrentSession: SessionModel!
   findMe: SecureUserModel!
+  findRandomStreams: [StreamModel!]!
   findSessionsByUser: [SessionModel!]!
   findSocialLinksByUser: [SocialLinkModel!]!
   generateSecret: TotpModel!
