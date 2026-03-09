@@ -10,6 +10,7 @@ export const MESSAGE = {
     EMAIL_ALREADY_EXISTS: 'Email уже используется',
     USERNAME_ALREADY_EXISTS: 'Пользователь с таким именем уже существует',
     INVALID_OLD_PASSWORD: 'Неверный текущий пароль',
+    STREAM_NOT_FOUND: 'Стрим не найден',
   },
   INFO: {
     TOTP_ENABLED: 'Двухфакторная аутентификация включена, пожалуйста введите код из приложения',

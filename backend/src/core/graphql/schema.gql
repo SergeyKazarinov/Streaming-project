@@ -123,6 +123,7 @@ type Mutation {
   changeInfoUser(data: ChangeProfileInput!): SecureUserModel!
   changePassword(data: ChangePasswordInput!): SecureUserModel!
   changeStreamInfo(data: ChangeStreamInfoInput!): StreamModel!
+  changeThumbnail(data: Upload!): StreamModel!
   clearSessionCookie: Boolean!
   createSocialLink(data: CreateSocialLinkInput!): SocialLinkModel!
   createUser(data: CreateUserInput!): Boolean!
@@ -134,6 +135,7 @@ type Mutation {
   removeAvatar: SecureUserModel!
   removeSession(id: String!): Boolean!
   removeSocialLink(data: RemoveSocialLinkInput!): Boolean!
+  removeThumbnail: StreamModel!
   reorderSocialLinks(data: [ReorderSocialLinkInput!]!): [SocialLinkModel!]!
   resetPassword(data: ResetPasswordInput!): Boolean!
   updatePassword(data: UpdatePasswordInput!): Boolean!
@@ -264,7 +266,7 @@ type StreamModel {
   serverUrl: String
   streamKey: String
 
-  """URL thumbnail стрима"""
+  """URL preview стрима"""
   thumbnailUrl: String
 
   """Название стрима"""

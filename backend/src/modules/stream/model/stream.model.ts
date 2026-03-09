@@ -13,7 +13,7 @@ export class StreamModel extends MetaModel implements Stream {
   @Field(() => String, { description: 'Название стрима' })
   title!: string;
 
-  @Field(() => String, { nullable: true, description: 'URL thumbnail стрима' })
+  @Field(() => String, { nullable: true, description: 'URL preview стрима' })
   thumbnailUrl!: Nullable<string>;
 
   @Field(() => String, { nullable: true })

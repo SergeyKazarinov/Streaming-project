@@ -1,12 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { StreamWhereInput } from 'prisma/generated/prisma/models';
 
 import { ChangeStreamInfoInput } from '@/modules/stream/inputs/change-stream-info.input';
 import { StreamModel } from '@/modules/stream/model/stream.model';
 
+import { MESSAGE } from '@/shared/consts/message.const';
 import { FiltersInput } from '@/shared/inputs/filters.input';
 
 import { PrismaService } from '@/core/prisma/prisma.service';
+
+type UpdateThumbnailInput = {
+  thumbnailUrl: Nullable<string>;
+};
 
 @Injectable()
 export class StreamRepository {
@@ -73,16 +78,36 @@ export class StreamRepository {
     });
   }
 
-  async updateStream(userId: string, input: ChangeStreamInfoInput) {
-    const { title } = input;
-
+  async updateStream(userId: string, input: ChangeStreamInfoInput): Promise<StreamModel>;
+  async updateStream(userId: string, input: UpdateThumbnailInput): Promise<StreamModel>;
+  async updateStream(userId: string, input: ChangeStreamInfoInput | UpdateThumbnailInput): Promise<StreamModel> {
     return await this.prismaService.stream.update({
       where: {
         userId,
       },
+      include: {
+        user: true,
+      },
       data: {
-        title,
+        ...input,
       },
     });
+  }
+
+  async findStreamByUserId(userId: string): Promise<StreamModel> {
+    const stream = await this.prismaService.stream.findUnique({
+      where: {
+        userId,
+      },
+      include: {
+        user: true,
+      },
+    });
+
+    if (!stream) {
+      throw new NotFoundException(MESSAGE.ERROR.STREAM_NOT_FOUND);
+    }
+
+    return stream;
   }
 }
