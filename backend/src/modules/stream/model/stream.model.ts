@@ -16,13 +16,13 @@ export class StreamModel extends MetaModel implements Stream {
   @Field(() => String, { nullable: true, description: 'URL preview стрима' })
   thumbnailUrl!: Nullable<string>;
 
-  @Field(() => String, { nullable: true })
+  @Field(() => String, { nullable: true, description: 'ID входного потока для трансляции' })
   ingressId!: Nullable<string>;
 
-  @Field(() => String, { nullable: true })
+  @Field(() => String, { nullable: true, description: 'URL сервера трансляции' })
   serverUrl!: Nullable<string>;
 
-  @Field(() => String, { nullable: true })
+  @Field(() => String, { nullable: true, description: 'Ключ потока трансляции' })
   streamKey!: Nullable<string>;
 
   @Field(() => Boolean, { description: 'Стрим в прямом эфире' })

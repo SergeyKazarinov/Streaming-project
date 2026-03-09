@@ -13,6 +13,12 @@ type UpdateThumbnailInput = {
   thumbnailUrl: Nullable<string>;
 };
 
+type UpdateIngressInput = {
+  ingressId: string;
+  serverUrl: string;
+  streamKey: string;
+};
+
 @Injectable()
 export class StreamRepository {
   constructor(private readonly prismaService: PrismaService) {}
@@ -80,7 +86,11 @@ export class StreamRepository {
 
   async updateStream(userId: string, input: ChangeStreamInfoInput): Promise<StreamModel>;
   async updateStream(userId: string, input: UpdateThumbnailInput): Promise<StreamModel>;
-  async updateStream(userId: string, input: ChangeStreamInfoInput | UpdateThumbnailInput): Promise<StreamModel> {
+  async updateStream(userId: string, input: UpdateIngressInput): Promise<StreamModel>;
+  async updateStream(
+    userId: string,
+    input: ChangeStreamInfoInput | UpdateThumbnailInput | UpdateIngressInput,
+  ): Promise<StreamModel> {
     return await this.prismaService.stream.update({
       where: {
         userId,

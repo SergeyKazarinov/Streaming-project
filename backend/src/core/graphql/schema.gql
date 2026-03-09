@@ -125,6 +125,7 @@ type Mutation {
   changeStreamInfo(data: ChangeStreamInfoInput!): StreamModel!
   changeThumbnail(data: Upload!): StreamModel!
   clearSessionCookie: Boolean!
+  createIngress(ingressType: Float!): Boolean!
   createSocialLink(data: CreateSocialLinkInput!): SocialLinkModel!
   createUser(data: CreateUserInput!): Boolean!
   deactivateAccount(data: DeactivateInput!): AuthModel!
@@ -259,11 +260,17 @@ type StreamModel {
   """Дата создания"""
   createdAt: DateTime!
   id: ID!
+
+  """ID входного потока для трансляции"""
   ingressId: String
 
   """Стрим в прямом эфире"""
   isLive: Boolean!
+
+  """URL сервера трансляции"""
   serverUrl: String
+
+  """Ключ потока трансляции"""
   streamKey: String
 
   """URL preview стрима"""
