@@ -19,6 +19,7 @@ import { UserModule } from '@/modules/repositories/user/user.module';
 import { SocialModule } from '@/modules/social/social.module';
 import { IngressModule } from '@/modules/stream/ingress/ingress/ingress.module';
 import { StreamModule } from '@/modules/stream/stream.module';
+import { WebhookModule } from '@/modules/webhook/webhook.module';
 
 import { envConfig } from '@/shared/config/env-config';
 import { getGraphQLConfig } from '@/shared/config/graphql.config';
@@ -63,6 +64,7 @@ import { RedisModule } from './redis/redis.module';
     SocialLinksModule,
     StreamModule,
     IngressModule,
+    WebhookModule,
   ],
 })
 export class CoreModule {}

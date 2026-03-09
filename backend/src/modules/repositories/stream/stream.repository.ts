@@ -7,17 +7,14 @@ import { StreamModel } from '@/modules/stream/model/stream.model';
 import { MESSAGE } from '@/shared/consts/message.const';
 import { FiltersInput } from '@/shared/inputs/filters.input';
 
+import type {
+  ReturnUpdatedStreamModel,
+  UpdateIngressInput,
+  UpdateIngressIsLiveInput,
+  UpdateThumbnailInput,
+} from './inputs/update-ingress.input';
+
 import { PrismaService } from '@/core/prisma/prisma.service';
-
-type UpdateThumbnailInput = {
-  thumbnailUrl: Nullable<string>;
-};
-
-type UpdateIngressInput = {
-  ingressId: string;
-  serverUrl: string;
-  streamKey: string;
-};
 
 @Injectable()
 export class StreamRepository {
@@ -84,16 +81,26 @@ export class StreamRepository {
     });
   }
 
-  async updateStream(userId: string, input: ChangeStreamInfoInput): Promise<StreamModel>;
-  async updateStream(userId: string, input: UpdateThumbnailInput): Promise<StreamModel>;
-  async updateStream(userId: string, input: UpdateIngressInput): Promise<StreamModel>;
+  async updateStream(userId: string, input: ChangeStreamInfoInput): Promise<ReturnUpdatedStreamModel>;
+  async updateStream(userId: string, input: UpdateThumbnailInput): Promise<ReturnUpdatedStreamModel>;
+  async updateStream(userId: string, input: UpdateIngressInput): Promise<ReturnUpdatedStreamModel>;
+  async updateStream(ingressId: string, input: UpdateIngressIsLiveInput): Promise<ReturnUpdatedStreamModel>;
   async updateStream(
-    userId: string,
-    input: ChangeStreamInfoInput | UpdateThumbnailInput | UpdateIngressInput,
-  ): Promise<StreamModel> {
+    id: string,
+    input: ChangeStreamInfoInput | UpdateThumbnailInput | UpdateIngressInput | UpdateIngressIsLiveInput,
+  ): Promise<ReturnUpdatedStreamModel> {
+    if ('isLive' in input && id) {
+      return await this.prismaService.stream.update({
+        where: {
+          ingressId: id,
+        },
+        data: input,
+      });
+    }
+
     return await this.prismaService.stream.update({
       where: {
-        userId,
+        userId: id,
       },
       include: {
         user: true,

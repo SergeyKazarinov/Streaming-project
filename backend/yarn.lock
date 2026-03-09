@@ -6528,6 +6528,7 @@ __metadata:
     prettier: "npm:^3.4.2"
     prisma: "npm:^7.2.0"
     qrcode: "npm:^1.5.4"
+    raw-body: "npm:^3.0.2"
     react: "npm:^19.2.3"
     react-dom: "npm:^19.2.3"
     react-email: "npm:5.2.5"
@@ -13340,7 +13341,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"raw-body@npm:^3.0.1":
+"raw-body@npm:^3.0.1, raw-body@npm:^3.0.2":
   version: 3.0.2
   resolution: "raw-body@npm:3.0.2"
   dependencies:
