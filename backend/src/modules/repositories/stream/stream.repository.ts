@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { StreamWhereInput } from 'prisma/generated/prisma/models';
 
+import { ChangeStreamInfoInput } from '@/modules/stream/inputs/change-stream-info.input';
 import { StreamModel } from '@/modules/stream/model/stream.model';
 
 import { FiltersInput } from '@/shared/inputs/filters.input';
@@ -68,6 +69,19 @@ export class StreamRepository {
         user: {
           isDeactivated: false,
         },
+      },
+    });
+  }
+
+  async updateStream(userId: string, input: ChangeStreamInfoInput) {
+    const { title } = input;
+
+    return await this.prismaService.stream.update({
+      where: {
+        userId,
+      },
+      data: {
+        title,
       },
     });
   }

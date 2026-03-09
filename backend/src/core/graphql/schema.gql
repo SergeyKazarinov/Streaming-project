@@ -40,6 +40,11 @@ input ChangeProfileInput {
   username: String!
 }
 
+input ChangeStreamInfoInput {
+  """Название стрима"""
+  title: String!
+}
+
 input CreateSocialLinkInput {
   """Название ссылки"""
   title: String!
@@ -117,6 +122,7 @@ type Mutation {
   changeEmail(data: ChangeEmailInput!): SecureUserModel!
   changeInfoUser(data: ChangeProfileInput!): SecureUserModel!
   changePassword(data: ChangePasswordInput!): SecureUserModel!
+  changeStreamInfo(data: ChangeStreamInfoInput!): StreamModel!
   clearSessionCookie: Boolean!
   createSocialLink(data: CreateSocialLinkInput!): SocialLinkModel!
   createUser(data: CreateUserInput!): Boolean!

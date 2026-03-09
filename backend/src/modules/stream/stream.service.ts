@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import { User } from 'prisma/generated/prisma/client';
 
 import { StreamRepository } from '../repositories/stream/stream.repository';
+
+import { ChangeStreamInfoInput } from './inputs/change-stream-info.input';
 
 @Injectable()
 export class StreamService {
@@ -28,5 +31,9 @@ export class StreamService {
     const randomStreams = allStreams.filter((stream, index) => randomIndexes.has(index));
 
     return randomStreams;
+  }
+
+  async changeStreamInfo(user: User, input: ChangeStreamInfoInput) {
+    return await this.streamRepository.updateStream(user.id, input);
   }
 }
