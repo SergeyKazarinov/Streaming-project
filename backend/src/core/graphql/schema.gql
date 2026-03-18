@@ -104,6 +104,19 @@ input FiltersInput {
   searchTerm: String
 }
 
+input GenerateStreamTokenInput {
+  """Идентификатор канала"""
+  chanelId: String!
+
+  """Идентификатор пользователя"""
+  userId: String!
+}
+
+type GenerateStreamTokenModel {
+  """Токен для стрима"""
+  token: String!
+}
+
 type LocationModel {
   city: String!
   country: String!
@@ -131,6 +144,7 @@ type Mutation {
   deactivateAccount(data: DeactivateInput!): AuthModel!
   disableTotp: Boolean!
   enableTotp(input: EnableTotpInput!): Boolean!
+  generateStreamToken(input: GenerateStreamTokenInput!): GenerateStreamTokenModel!
   login(data: LoginInput!): AuthModel!
   logout: Boolean!
   removeAvatar: SecureUserModel!

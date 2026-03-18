@@ -1,21 +1,28 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { FileUpload } from 'graphql-upload-ts';
+import { AccessToken } from 'livekit-server-sdk';
 import { User } from 'prisma/generated/prisma/client';
 import sharp from 'sharp';
+import { v4 as uuidv4 } from 'uuid';
 
 import { MimeType } from '@/shared/types/mime.type';
 
 import { StorageService } from '../libs/storage/storage.service';
 import { StreamRepository } from '../repositories/stream/stream.repository';
+import { UserRepository } from '../repositories/user/user.repository';
 
 import { ChangeStreamInfoInput } from './inputs/change-stream-info.input';
+import { GenerateStreamTokenInput } from './inputs/generate-stream-token.input';
 import { StreamModel } from './model/stream.model';
 
 @Injectable()
 export class StreamService {
   constructor(
     private readonly streamRepository: StreamRepository,
+    private readonly userRepository: UserRepository,
     private readonly storageService: StorageService,
+    private readonly configService: ConfigService,
   ) {}
 
   private async processAndUploadFile(buffer: Buffer, fileName: string, animated: boolean) {
@@ -94,5 +101,43 @@ export class StreamService {
     const updatedStream = await this.streamRepository.updateStream(user.id, { thumbnailUrl: null });
 
     return updatedStream;
+  }
+
+  async generateStreamToken(input: GenerateStreamTokenInput) {
+    const { userId, chanelId } = input;
+    let self: { id: string; username: string };
+
+    const user = await this.userRepository.findUniqueUserById(userId);
+
+    if (user) {
+      self = { id: user.id, username: user.username };
+    } else {
+      self = { id: uuidv4(), username: `Зритель ${Math.floor(Math.random() * 1000000)}` };
+    }
+
+    const channel = await this.userRepository.findUniqueUserById(chanelId);
+
+    if (!channel) {
+      throw new NotFoundException('Канал не найден');
+    }
+
+    const isHost = self.id === channel.id;
+
+    const token = new AccessToken(
+      this.configService.getOrThrow<string>('LIVEKIT_API_KEY'),
+      this.configService.getOrThrow<string>('LIVEKIT_API_SECRET'),
+      {
+        identity: isHost ? `Host-${self.id}` : self.id.toString(),
+        name: self.username,
+      },
+    );
+
+    token.addGrant({
+      room: channel.id,
+      roomJoin: true,
+      canPublish: false,
+    });
+
+    return { token: token.toJwt() };
   }
 }
