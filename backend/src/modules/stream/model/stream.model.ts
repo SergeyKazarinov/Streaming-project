@@ -2,6 +2,7 @@ import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { Stream } from 'prisma/generated/prisma/browser';
 
 import { SecureUserModel } from '@/modules/auth/account/models/user.model';
+import { CategoryModel } from '@/modules/category/model/category.model';
 
 import { MetaModel } from '@/shared/models/meta.model';
 
@@ -33,4 +34,10 @@ export class StreamModel extends MetaModel implements Stream {
 
   @Field(() => String, { description: 'ID владельца стрима' })
   userId!: string;
+
+  @Field(() => String, { nullable: true, description: 'ID категории' })
+  categoryId!: Nullable<string>;
+
+  @Field(() => CategoryModel, { nullable: true, description: 'Категория' })
+  category!: Nullable<CategoryModel>;
 }

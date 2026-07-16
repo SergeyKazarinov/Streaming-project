@@ -10,4 +10,11 @@ export class ChangeStreamInfoInput {
     isNotEmpty: true,
   })
   title!: string;
+
+  @Field(() => String, { nullable: true, description: 'ID категории' })
+  @ValidatorFactory({
+    isString: true,
+    isOptional: true,
+  })
+  categoryId!: string;
 }

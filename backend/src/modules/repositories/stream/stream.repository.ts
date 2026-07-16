@@ -55,6 +55,7 @@ export class StreamRepository {
       },
       include: {
         user: true,
+        category: true,
       },
       skip: offset,
       take: limit,
@@ -98,6 +99,26 @@ export class StreamRepository {
       });
     }
 
+    if ('categoryId' in input && id) {
+      const { categoryId, ...rest } = input;
+      return await this.prismaService.stream.update({
+        where: {
+          userId: id,
+        },
+        include: {
+          user: true,
+        },
+        data: {
+          ...rest,
+          category: {
+            connect: {
+              id: categoryId,
+            },
+          },
+        },
+      });
+    }
+
     return await this.prismaService.stream.update({
       where: {
         userId: id,
@@ -111,13 +132,14 @@ export class StreamRepository {
     });
   }
 
-  async findStreamByUserId(userId: string): Promise<StreamModel> {
+  async findStreamByUserId(userId: string): Promise<Omit<StreamModel, 'category'>> {
     const stream = await this.prismaService.stream.findUnique({
       where: {
         userId,
       },
       include: {
         user: true,
+        category: true,
       },
     });
 

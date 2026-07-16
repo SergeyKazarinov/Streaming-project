@@ -14,7 +14,6 @@ import { UserRepository } from '../repositories/user/user.repository';
 
 import { ChangeStreamInfoInput } from './inputs/change-stream-info.input';
 import { GenerateStreamTokenInput } from './inputs/generate-stream-token.input';
-import { StreamModel } from './model/stream.model';
 
 @Injectable()
 export class StreamService {
@@ -31,7 +30,7 @@ export class StreamService {
     await this.storageService.uploadFile(processedBuffer, fileName, MimeType.IMAGE_WEBP);
   }
 
-  private async findStreamByUserId(userId: string): Promise<StreamModel> {
+  private async findStreamByUserId(userId: string): Promise<ReturnType<StreamRepository['findStreamByUserId']>> {
     return await this.streamRepository.findStreamByUserId(userId);
   }
 
@@ -105,14 +104,14 @@ export class StreamService {
 
   async generateStreamToken(input: GenerateStreamTokenInput) {
     const { userId, chanelId } = input;
-    let self: { id: string; username: string };
+    let self: Pick<User, 'id' | 'username'>;
 
     const user = await this.userRepository.findUniqueUserById(userId);
 
     if (user) {
       self = { id: user.id, username: user.username };
     } else {
-      self = { id: uuidv4(), username: `Зритель ${Math.floor(Math.random() * 1000000)}` };
+      self = { id: uuidv4(), username: `Зритель ${Math.floor(Math.random() * 1_000_000)}` };
     }
 
     const channel = await this.userRepository.findUniqueUserById(chanelId);
