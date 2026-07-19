@@ -11,6 +11,7 @@ import { SessionModule } from '@/modules/auth/session/session.module';
 import { TotpModule } from '@/modules/auth/totp/totp.module';
 import { VerificationModule } from '@/modules/auth/verification/verification.module';
 import { CategoryModule } from '@/modules/category/category.module';
+import { ChatMessageModule } from '@/modules/chat-message/chat-message.module';
 import { CronModule } from '@/modules/cron/cron.module';
 import { LivekitModule } from '@/modules/libs/livekit/livekit.module';
 import { StorageModule } from '@/modules/libs/storage/storage.module';
@@ -67,6 +68,7 @@ import { RedisModule } from './redis/redis.module';
     IngressModule,
     WebhookModule,
     CategoryModule,
+    ChatMessageModule,
   ],
 })
 export class CoreModule {}

@@ -11,6 +11,8 @@ export const getGraphQLConfig = (configService: ConfigService): ApolloDriverConf
   autoSchemaFile: join(process.cwd(), 'src/core/graphql/schema.gql'),
   sortSchema: true,
   context: ({ req, res }: { req: Request; res: Response }) => ({ req, res }),
-  installSubscriptionHandlers: true,
   introspection: true,
+  subscriptions: {
+    'graphql-ws': true,
+  },
 });

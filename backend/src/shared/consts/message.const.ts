@@ -12,6 +12,7 @@ export const MESSAGE = {
     INVALID_OLD_PASSWORD: 'Неверный текущий пароль',
     STREAM_NOT_FOUND: 'Стрим не найден',
     CATEGORY_NOT_FOUND: 'Категория не найдена',
+    STREAM_NOT_LIVE: 'Стрим не в прямом эфире',
   },
   INFO: {
     TOTP_ENABLED: 'Двухфакторная аутентификация включена, пожалуйста введите код из приложения',

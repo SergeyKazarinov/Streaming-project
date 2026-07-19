@@ -149,4 +149,22 @@ export class StreamRepository {
 
     return stream;
   }
+
+  async findStreamByStreamId(streamId: string): Promise<StreamModel> {
+    const stream = await this.prismaService.stream.findUnique({
+      where: {
+        id: streamId,
+      },
+      include: {
+        user: true,
+        category: true,
+      },
+    });
+
+    if (!stream) {
+      throw new NotFoundException(MESSAGE.ERROR.STREAM_NOT_FOUND);
+    }
+
+    return stream;
+  }
 }

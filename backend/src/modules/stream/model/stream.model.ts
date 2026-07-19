@@ -3,6 +3,7 @@ import { Stream } from 'prisma/generated/prisma/browser';
 
 import { SecureUserModel } from '@/modules/auth/account/models/user.model';
 import { CategoryModel } from '@/modules/category/model/category.model';
+import { ChatMessageModel } from '@/modules/chat-message/model/chat-message.model';
 
 import { MetaModel } from '@/shared/models/meta.model';
 
@@ -40,4 +41,7 @@ export class StreamModel extends MetaModel implements Stream {
 
   @Field(() => CategoryModel, { nullable: true, description: 'Категория' })
   category!: Nullable<CategoryModel>;
+
+  @Field(() => [ChatMessageModel], { description: 'Сообщения чата' })
+  chatMessages?: ChatMessageModel[];
 }
