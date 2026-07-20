@@ -161,6 +161,27 @@ input FiltersInput {
   searchTerm: String
 }
 
+type FollowModel {
+  """Дата создания"""
+  createdAt: DateTime!
+
+  """Подписчик"""
+  follower: UserModel!
+
+  """id подписчика"""
+  followerId: String!
+
+  """Пользователь, на которого подписан"""
+  following: UserModel!
+
+  """id пользователя, на которого подписан"""
+  followingId: String!
+  id: ID!
+
+  """Дата обновления"""
+  updatedAt: DateTime!
+}
+
 input GenerateStreamTokenInput {
   """Идентификатор канала"""
   chanelId: String!
@@ -201,6 +222,7 @@ type Mutation {
   deactivateAccount(data: DeactivateInput!): AuthModel!
   disableTotp: Boolean!
   enableTotp(input: EnableTotpInput!): Boolean!
+  follow(chanelId: String!): FollowModel!
   generateStreamToken(input: GenerateStreamTokenInput!): GenerateStreamTokenModel!
   login(data: LoginInput!): AuthModel!
   logout: Boolean!
@@ -211,6 +233,7 @@ type Mutation {
   reorderSocialLinks(data: [ReorderSocialLinkInput!]!): [SocialLinkModel!]!
   resetPassword(data: ResetPasswordInput!): Boolean!
   sendMessage(data: ChatMessageInput!, streamId: String!): ChatMessageModel!
+  unfollow(chanelId: String!): FollowModel!
   updatePassword(data: UpdatePasswordInput!): Boolean!
   updateSocialLink(data: UpdateSocialLinkInput!): SocialLinkModel!
   verifyAccount(data: VerificationInput!): SecureUserModel!
@@ -223,6 +246,8 @@ type Query {
   findCurrentSession: SessionModel!
   findMe: SecureUserModel!
   findMessagesByStreamId(streamId: String!): [ChatMessageModel!]!
+  findMyFollowers: [FollowModel!]!
+  findMyFollowings: [FollowModel!]!
   findRandomCategories: [CategoryModel!]!
   findRandomStreams: [StreamModel!]!
   findSessionsByUser: [SessionModel!]!

@@ -13,6 +13,9 @@ export const MESSAGE = {
     STREAM_NOT_FOUND: 'Стрим не найден',
     CATEGORY_NOT_FOUND: 'Категория не найдена',
     STREAM_NOT_LIVE: 'Стрим не в прямом эфире',
+    FOLLOW_YOURSELF: 'Вы не можете подписаться на самого себя',
+    ALREADY_FOLLOWING: 'Вы уже подписаны на этого пользователя',
+    FOLLOW_NOT_FOUND: 'Вы не подписаны на этого пользователя',
   },
   INFO: {
     TOTP_ENABLED: 'Двухфакторная аутентификация включена, пожалуйста введите код из приложения',
