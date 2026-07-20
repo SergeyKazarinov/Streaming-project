@@ -62,4 +62,12 @@ export class FollowRepository {
       },
     });
   }
+
+  async findFollowersCountByUserId(userId: string): Promise<number> {
+    return await this.prismaService.follow.count({
+      where: {
+        followingId: userId,
+      },
+    });
+  }
 }

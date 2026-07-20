@@ -240,6 +240,7 @@ type Mutation {
 }
 
 type Query {
+  channelByUsername(username: String!): SecureUserModel!
   findAllCategories: [CategoryModel!]!
   findAllStreams(input: FiltersInput!): [StreamModel!]!
   findCategoryBySlug(slug: String!): CategoryModel!
@@ -252,7 +253,9 @@ type Query {
   findRandomStreams: [StreamModel!]!
   findSessionsByUser: [SessionModel!]!
   findSocialLinksByUser: [SocialLinkModel!]!
+  followersCount(channelId: String!): Float!
   generateSecret: TotpModel!
+  recommendedChannels: [SecureUserModel!]!
 }
 
 input RemoveSocialLinkInput {
@@ -294,6 +297,12 @@ type SecureUserModel {
 
   """Email пользователя"""
   email: ID!
+
+  """Подписчики пользователя"""
+  followers: [FollowModel!]!
+
+  """Подписки пользователя"""
+  followings: [FollowModel!]!
 
   """ID пользователя"""
   id: ID!
@@ -465,6 +474,12 @@ type UserModel {
 
   """Email пользователя"""
   email: ID!
+
+  """Подписчики пользователя"""
+  followers: [FollowModel!]!
+
+  """Подписки пользователя"""
+  followings: [FollowModel!]!
 
   """ID пользователя"""
   id: ID!

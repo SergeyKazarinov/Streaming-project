@@ -1,6 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { User } from 'prisma/generated/prisma/client';
-import { UserCreateInput, UserDeleteManyArgs, UserUpdateInput, UserWhereInput } from 'prisma/generated/prisma/models';
+import {
+  UserCreateInput,
+  UserDeleteManyArgs,
+  UserFindManyArgs,
+  UserUpdateInput,
+  UserWhereInput,
+} from 'prisma/generated/prisma/models';
 
 import { PrismaService } from '@/core/prisma/prisma.service';
 
@@ -36,7 +42,17 @@ export class UserRepository {
         username,
       },
       include: {
-        socialLinks: true,
+        socialLinks: {
+          orderBy: {
+            order: 'asc',
+          },
+        },
+        stream: {
+          include: {
+            category: true,
+          },
+        },
+        followings: true,
       },
     });
   }
@@ -52,9 +68,17 @@ export class UserRepository {
     });
   }
 
-  async findMany(where: UserWhereInput): Promise<User[]> {
+  async findMany(
+    where: UserWhereInput,
+    include: UserFindManyArgs['include'] = {},
+    orderBy: UserFindManyArgs['orderBy'] = {},
+    take: UserFindManyArgs['take'] = undefined,
+  ): Promise<User[]> {
     return await this.prismaService.user.findMany({
       where,
+      include,
+      orderBy,
+      take,
     });
   }
 
