@@ -5,9 +5,14 @@ import { FollowRepository } from '@/modules/repositories/follow/follow.repositor
 
 import { MESSAGE } from '@/shared/consts/message.const';
 
+import { NotificationService } from '../notification/notification.service';
+
 @Injectable()
 export class FollowService {
-  constructor(private readonly followRepository: FollowRepository) {}
+  constructor(
+    private readonly followRepository: FollowRepository,
+    private readonly notificationService: NotificationService,
+  ) {}
 
   async findMyFollowers(user: User): Promise<ReturnType<typeof this.followRepository.findFollowers>> {
     return await this.followRepository.findFollowers(user.id);
@@ -31,10 +36,14 @@ export class FollowService {
       throw new ConflictException(MESSAGE.ERROR.ALREADY_FOLLOWING);
     }
 
-    return await this.followRepository.create({
+    const follow = await this.followRepository.create({
       followerId: user.id,
       followingId: chanelId,
     });
+
+    await this.notificationService.createFollowNotification(follow.following.id, follow.follower);
+
+    return follow;
   }
 
   async unfollow(user: User, chanelId: string) {

@@ -166,13 +166,13 @@ type FollowModel {
   createdAt: DateTime!
 
   """Подписчик"""
-  follower: UserModel!
+  follower: SecureUserModel!
 
   """id подписчика"""
   followerId: String!
 
   """Пользователь, на которого подписан"""
-  following: UserModel!
+  following: SecureUserModel!
 
   """id пользователя, на которого подписан"""
   followingId: String!
@@ -234,9 +234,58 @@ type Mutation {
   resetPassword(data: ResetPasswordInput!): Boolean!
   sendMessage(data: ChatMessageInput!, streamId: String!): ChatMessageModel!
   unfollow(chanelId: String!): FollowModel!
+  updateNotificationSetting(input: UpdateNotificationInput!): NotificationSettingModel!
   updatePassword(data: UpdatePasswordInput!): Boolean!
   updateSocialLink(data: UpdateSocialLinkInput!): SocialLinkModel!
   verifyAccount(data: VerificationInput!): SecureUserModel!
+}
+
+type NotificationModel {
+  """Дата создания"""
+  createdAt: DateTime!
+
+  """ID уведомления"""
+  id: ID!
+
+  """Статус прочтения уведомления"""
+  isRead: Boolean!
+
+  """Текст уведомления"""
+  text: String!
+
+  """Тип уведомления"""
+  type: NotificationType!
+
+  """Дата обновления"""
+  updatedAt: DateTime!
+
+  """ID пользователя"""
+  userId: String!
+}
+
+type NotificationSettingModel {
+  """Дата создания"""
+  createdAt: DateTime!
+
+  """ID настройки уведомлений"""
+  id: ID!
+
+  """Статус включения уведомлений на сайте"""
+  siteNotificationEnabled: Boolean!
+
+  """Дата обновления"""
+  updatedAt: DateTime!
+
+  """ID пользователя"""
+  userId: String!
+}
+
+"""Тип уведомления"""
+enum NotificationType {
+  ENABLE_TWO_FACTOR
+  NEW_FOLLOWER
+  STREAM_START
+  VERIFIED_CHANNEL
 }
 
 type Query {
@@ -255,6 +304,9 @@ type Query {
   findSocialLinksByUser: [SocialLinkModel!]!
   followersCount(channelId: String!): Float!
   generateSecret: TotpModel!
+  notificationCount: Float!
+  notificationList: [NotificationModel!]!
+  notificationSetting: NotificationSettingModel!
   recommendedChannels: [SecureUserModel!]!
 }
 
@@ -318,6 +370,9 @@ type SecureUserModel {
 
   """Статус верификации пользователя"""
   isVerified: Boolean!
+
+  """Настройки уведомлений пользователя"""
+  notificationSetting: NotificationSettingModel
 
   """Социальные ссылки пользователя"""
   socialLinks: [SocialLinkModel!]!
@@ -426,6 +481,11 @@ type TotpModel {
   secret: String!
 }
 
+input UpdateNotificationInput {
+  """Включены ли уведомления на сайте"""
+  siteNotificationEnabled: Boolean
+}
+
 input UpdatePasswordInput {
   """Подтверждение нового пароля пользователя"""
   confirmNewPassword: String!
@@ -495,6 +555,9 @@ type UserModel {
 
   """Статус верификации пользователя"""
   isVerified: Boolean!
+
+  """Настройки уведомлений пользователя"""
+  notificationSetting: NotificationSettingModel
 
   """Пароль пользователя"""
   password: String!

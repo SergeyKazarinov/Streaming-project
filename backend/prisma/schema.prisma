@@ -9,29 +9,55 @@ datasource db {
 }
 
 model User {
-  id              String        @id @default(uuid())
-  email           String        @unique
-  password        String
-  username        String        @unique
-  displayName     String        @map("display_name")
-  avatar          String?
-  bio             String?
-  tokens          Token[]
-  socialLinks     SocialLink[]
-  stream          Stream?
-  isTotpEnabled   Boolean       @default(false) @map("is_totp_enabled")
-  totpSecret      String?       @map("totp_secret")
-  isVerified      Boolean       @default(false) @map("is_verified")
-  isEmailVerified Boolean       @default(false) @map("is_email_verified")
-  isDeactivated   Boolean       @default(false) @map("is_deactivated")
-  deactivatedAt   DateTime?     @map("deactivated_at")
-  createdAt       DateTime      @default(now()) @map("created_at")
-  updatedAt       DateTime      @updatedAt @map("updated_at")
-  chatMessages    ChatMessage[]
-  followers       Follow[]      @relation("followers")
-  followings      Follow[]      @relation("followings")
+  id                  String               @id @default(uuid())
+  email               String               @unique
+  password            String
+  username            String               @unique
+  displayName         String               @map("display_name")
+  avatar              String?
+  bio                 String?
+  tokens              Token[]
+  socialLinks         SocialLink[]
+  stream              Stream?
+  isTotpEnabled       Boolean              @default(false) @map("is_totp_enabled")
+  totpSecret          String?              @map("totp_secret")
+  isVerified          Boolean              @default(false) @map("is_verified")
+  isEmailVerified     Boolean              @default(false) @map("is_email_verified")
+  isDeactivated       Boolean              @default(false) @map("is_deactivated")
+  deactivatedAt       DateTime?            @map("deactivated_at")
+  createdAt           DateTime             @default(now()) @map("created_at")
+  updatedAt           DateTime             @updatedAt @map("updated_at")
+  chatMessages        ChatMessage[]
+  followers           Follow[]             @relation("followers")
+  followings          Follow[]             @relation("followings")
+  notification        Notification[]
+  notificationSetting NotificationSetting?
 
   @@map("users")
+}
+
+model Notification {
+  id        String           @id @default(uuid())
+  type      NotificationType
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String           @map("user_id")
+  isRead    Boolean          @default(false) @map("is_read")
+  text      String
+  createdAt DateTime         @default(now()) @map("created_at")
+  updatedAt DateTime?        @updatedAt @map("updated_at")
+
+  @@map("notifications")
+}
+
+model NotificationSetting {
+  id                      String    @id @default(uuid())
+  user                    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                  String    @unique @map("user_id")
+  siteNotificationEnabled Boolean   @default(true) @map("site_notification_enabled")
+  createdAt               DateTime  @default(now()) @map("created_at")
+  updatedAt               DateTime? @updatedAt @map("updated_at")
+
+  @@map("notification_settings")
 }
 
 model Token {
@@ -40,7 +66,7 @@ model Token {
   type      TokenType
   expiresIn DateTime  @map("expires_in")
   createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String    @map("user_id")
 
@@ -48,13 +74,13 @@ model Token {
 }
 
 model SocialLink {
-  id        String   @id @default(uuid())
-  title     String   @map("title")
+  id        String    @id @default(uuid())
+  title     String    @map("title")
   url       String
-  order     Int      @map("order")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  order     Int       @map("order")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
 
   @@map("social_links")
@@ -93,14 +119,14 @@ model Category {
 }
 
 model ChatMessage {
-  id        String   @id @default(uuid())
+  id        String    @id @default(uuid())
   text      String
-  stream    Stream   @relation(fields: [streamId], references: [id])
-  streamId  String   @map("stream_id")
-  user      User     @relation(fields: [userId], references: [id])
-  userId    String   @map("user_id")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  stream    Stream    @relation(fields: [streamId], references: [id])
+  streamId  String    @map("stream_id")
+  user      User      @relation(fields: [userId], references: [id])
+  userId    String    @map("user_id")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
 
   @@map("chat_messages")
 }
@@ -113,8 +139,8 @@ model Follow {
   following   User   @relation(name: "followings", fields: [followingId], references: [id], onDelete: Cascade)
   followingId String @map("following_id")
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
 
   @@unique([followerId, followingId])
   @@index([followerId])
@@ -128,4 +154,13 @@ enum TokenType {
   DEACTIVATE_ACCOUNT
 
   @@map("token_types")
+}
+
+enum NotificationType {
+  NEW_FOLLOWER
+  ENABLE_TWO_FACTOR
+  VERIFIED_CHANNEL
+  STREAM_START
+
+  @@map("notification_types")
 }

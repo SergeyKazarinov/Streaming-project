@@ -3,6 +3,7 @@ import { User } from 'prisma/generated/prisma/client';
 
 import { ChatMessageModel } from '@/modules/chat-message/model/chat-message.model';
 import { FollowModel } from '@/modules/follow/model/follow.model';
+import { NotificationSettingModel } from '@/modules/notification/model/notification-seting.model';
 import { SocialLinkModel } from '@/modules/social/models/social-link.model';
 import { StreamModel } from '@/modules/stream/model/stream.model';
 
@@ -63,6 +64,9 @@ export class UserModel extends MetaModel implements User {
 
   @Field(() => [FollowModel], { description: 'Подписчики пользователя' })
   followers?: FollowModel[];
+
+  @Field(() => NotificationSettingModel, { nullable: true, description: 'Настройки уведомлений пользователя' })
+  notificationSetting?: NotificationSettingModel;
 }
 
 @ObjectType()

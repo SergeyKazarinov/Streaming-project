@@ -1,6 +1,7 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { User } from 'prisma/generated/prisma/client';
 
+import { NotificationRepository } from '@/modules/repositories/notification/notification.repository';
 import { UserRepository } from '@/modules/repositories/user/user.repository';
 
 import { MESSAGE } from '@/shared/consts/message.const';
@@ -20,6 +21,7 @@ export class AccountService extends BaseUserService {
   constructor(
     private readonly verificationService: VerificationService,
     protected readonly userRepository: UserRepository,
+    private readonly notificationRepository: NotificationRepository,
   ) {
     super(userRepository);
   }
@@ -63,6 +65,8 @@ export class AccountService extends BaseUserService {
     });
 
     await this.verificationService.sendVerificationToken(user);
+
+    await this.notificationRepository.changeNotificationSetting(user.id, { siteNotificationEnabled: true });
 
     return true;
   }

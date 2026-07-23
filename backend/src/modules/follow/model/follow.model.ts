@@ -1,7 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { Follow } from 'prisma/generated/prisma/client';
 
-import { UserModel } from '@/modules/auth/account/models/user.model';
+import { SecureUserModel } from '@/modules/auth/account/models/user.model';
 
 import { MetaModel } from '@/shared/models/meta.model';
 
@@ -10,14 +10,14 @@ export class FollowModel extends MetaModel implements Follow {
   @Field(() => ID)
   id!: string;
 
-  @Field(() => UserModel, { description: 'Подписчик' })
-  follower!: UserModel;
+  @Field(() => SecureUserModel, { description: 'Подписчик' })
+  follower!: SecureUserModel;
 
   @Field(() => String, { description: 'id подписчика' })
   followerId!: string;
 
-  @Field(() => UserModel, { description: 'Пользователь, на которого подписан' })
-  following!: UserModel;
+  @Field(() => SecureUserModel, { description: 'Пользователь, на которого подписан' })
+  following!: SecureUserModel;
 
   @Field(() => String, { description: 'id пользователя, на которого подписан' })
   followingId!: string;

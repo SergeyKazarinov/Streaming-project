@@ -32,6 +32,7 @@ export class UserRepository {
       },
       include: {
         socialLinks: true,
+        notificationSetting: true,
       },
     });
   }

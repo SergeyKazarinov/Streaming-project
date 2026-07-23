@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { FollowCreateArgs, FollowDeleteArgs, FollowModel, FollowWhereInput } from 'prisma/generated/prisma/models';
+import { FollowCreateArgs, FollowDeleteArgs, type FollowModel, FollowWhereInput } from 'prisma/generated/prisma/models';
 
 import { PrismaService } from '@/core/prisma/prisma.service';
 
@@ -43,7 +43,7 @@ export class FollowRepository {
     });
   }
 
-  async create(data: FollowCreateArgs['data']): Promise<FollowModel> {
+  async create(data: FollowCreateArgs['data']) {
     return await this.prismaService.follow.create({
       data,
       include: {

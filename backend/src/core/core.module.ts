@@ -18,6 +18,7 @@ import { FollowModule } from '@/modules/follow/follow.module';
 import { LivekitModule } from '@/modules/libs/livekit/livekit.module';
 import { StorageModule } from '@/modules/libs/storage/storage.module';
 import { MailModule } from '@/modules/mail/mail.module';
+import { NotificationModule } from '@/modules/notification/notification.module';
 import { SocialLinksModule } from '@/modules/repositories/social/social-links.module';
 import { UserModule } from '@/modules/repositories/user/user.module';
 import { SocialModule } from '@/modules/social/social.module';
@@ -73,6 +74,7 @@ import { RedisModule } from './redis/redis.module';
     ChatMessageModule,
     FollowModule,
     ChannelModule,
+    NotificationModule,
   ],
 })
 export class CoreModule {}
