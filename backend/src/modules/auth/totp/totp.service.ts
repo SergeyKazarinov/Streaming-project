@@ -3,6 +3,7 @@ import * as OTPAuth from 'otpauth';
 import { User } from 'prisma/generated/prisma/client';
 import QRCode from 'qrcode';
 
+import { NotificationService } from '@/modules/notification/notification.service';
 import { UserRepository } from '@/modules/repositories/user/user.repository';
 
 import { generateTotpObject } from '@/shared/lib/generate-totp-object';
@@ -11,7 +12,10 @@ import { EnableTotpInput } from './inputs/enable-totp.input';
 
 @Injectable()
 export class TotpService {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(
+    private readonly userRepository: UserRepository,
+    private readonly notificationService: NotificationService,
+  ) {}
 
   async generateSecret(user: User) {
     const secret = new OTPAuth.Secret({ size: 20 }).base32;
@@ -39,10 +43,14 @@ export class TotpService {
       throw new BadRequestException('Неверный код');
     }
 
-    await this.userRepository.updateUser(user.id, {
+    const updatedUser = await this.userRepository.updateUser(user.id, {
       isTotpEnabled: true,
       totpSecret: secret,
     });
+
+    if (updatedUser.notificationSetting?.siteNotificationEnabled) {
+      await this.notificationService.createTotpNotification(user.id);
+    }
 
     return true;
   }

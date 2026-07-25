@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { StreamWhereInput } from 'prisma/generated/prisma/models';
+import { type StreamInclude, StreamWhereInput } from 'prisma/generated/prisma/models';
 
 import { ChangeStreamInfoInput } from '@/modules/stream/inputs/change-stream-info.input';
 import { StreamModel } from '@/modules/stream/model/stream.model';
@@ -82,6 +82,22 @@ export class StreamRepository {
     });
   }
 
+  async startStream(ingressId: string, input: UpdateIngressIsLiveInput) {
+    return await this.prismaService.stream.update({
+      where: {
+        ingressId,
+      },
+      include: {
+        user: {
+          include: {
+            notificationSetting: true,
+          },
+        },
+      },
+      data: input,
+    });
+  }
+
   async updateStream(userId: string, input: ChangeStreamInfoInput): Promise<ReturnUpdatedStreamModel>;
   async updateStream(userId: string, input: UpdateThumbnailInput): Promise<ReturnUpdatedStreamModel>;
   async updateStream(userId: string, input: UpdateIngressInput): Promise<ReturnUpdatedStreamModel>;
@@ -90,11 +106,20 @@ export class StreamRepository {
     id: string,
     input: ChangeStreamInfoInput | UpdateThumbnailInput | UpdateIngressInput | UpdateIngressIsLiveInput,
   ): Promise<ReturnUpdatedStreamModel> {
+    const include: StreamInclude = {
+      user: {
+        include: {
+          notificationSetting: true,
+        },
+      },
+    };
+
     if ('isLive' in input && id) {
       return await this.prismaService.stream.update({
         where: {
           ingressId: id,
         },
+        include,
         data: input,
       });
     }
@@ -105,9 +130,7 @@ export class StreamRepository {
         where: {
           userId: id,
         },
-        include: {
-          user: true,
-        },
+        include,
         data: {
           ...rest,
           category: {
@@ -123,9 +146,7 @@ export class StreamRepository {
       where: {
         userId: id,
       },
-      include: {
-        user: true,
-      },
+      include,
       data: {
         ...input,
       },

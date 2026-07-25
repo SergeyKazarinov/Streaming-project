@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import type { NotificationSetting, NotificationType } from 'prisma/generated/prisma/client';
-import type { BatchPayload } from 'prisma/generated/prisma/internal/prismaNamespace';
-import type { NotificationModel } from 'prisma/generated/prisma/models';
+import type { NotificationType } from 'prisma/generated/prisma/client';
 
 import type { UpdateNotificationInput } from '@/modules/notification/inputs/update-notification.input';
 
@@ -11,13 +9,13 @@ import { PrismaService } from '@/core/prisma/prisma.service';
 export class NotificationRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async getNotificationSetting(userId: string): Promise<Nullable<NotificationSetting>> {
+  async getNotificationSetting(userId: string) {
     return await this.prismaService.notificationSetting.findUnique({
       where: { userId },
     });
   }
 
-  async changeNotificationSetting(userId: string, input: UpdateNotificationInput): Promise<NotificationSetting> {
+  async changeNotificationSetting(userId: string, input: UpdateNotificationInput) {
     const { siteNotificationEnabled } = input;
 
     return await this.prismaService.notificationSetting.upsert({
@@ -35,27 +33,27 @@ export class NotificationRepository {
     });
   }
 
-  async getNotificationCount(userId: string): Promise<number> {
+  async getNotificationCount(userId: string) {
     return await this.prismaService.notification.count({
       where: { userId, isRead: false },
     });
   }
 
-  async getNotificationList(userId: string): Promise<NotificationModel[]> {
+  async getNotificationList(userId: string) {
     return await this.prismaService.notification.findMany({
       where: { userId },
       orderBy: { createdAt: 'desc' },
     });
   }
 
-  async updateIsReadNotificationByUserId(userId: string): Promise<BatchPayload> {
+  async updateIsReadNotificationByUserId(userId: string) {
     return await this.prismaService.notification.updateMany({
       where: { userId },
       data: { isRead: true },
     });
   }
 
-  async createNotification(userId: string, type: NotificationType, text: string): Promise<NotificationModel> {
+  async createNotification(userId: string, type: NotificationType, text: string) {
     const notification = await this.prismaService.notification.create({
       data: {
         userId,

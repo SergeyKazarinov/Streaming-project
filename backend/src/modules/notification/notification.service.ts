@@ -3,6 +3,7 @@ import { NotificationType } from 'prisma/generated/prisma/enums';
 
 import type { SecureUserModel } from '../auth/account/models/user.model';
 import { NotificationRepository } from '../repositories/notification/notification.repository';
+import type { StreamModel } from '../stream/model/stream.model';
 
 import { UpdateNotificationInput } from './inputs/update-notification.input';
 
@@ -35,12 +36,12 @@ export class NotificationService {
 
   async createStreamNotification(
     userId: string,
-    streamId: string,
+    stream: Pick<StreamModel, 'title'> & { user: Pick<SecureUserModel, 'username'> },
   ): Promise<ReturnType<NotificationRepository['createNotification']>> {
     return await this.notificationRepository.createNotification(
       userId,
       NotificationType.STREAM_START,
-      `Стрим ${streamId} начался`,
+      `Начался стрим на канале ${stream.user.username}: ${stream.title}`,
     );
   }
 
@@ -52,6 +53,14 @@ export class NotificationService {
       followingId,
       NotificationType.NEW_FOLLOWER,
       `У вас новый подписчик: ${follower.username}`,
+    );
+  }
+
+  async createTotpNotification(userId: string): Promise<ReturnType<NotificationRepository['createNotification']>> {
+    return await this.notificationRepository.createNotification(
+      userId,
+      NotificationType.ENABLE_TWO_FACTOR,
+      'Вы включили двухфакторную аутентификацию',
     );
   }
 }

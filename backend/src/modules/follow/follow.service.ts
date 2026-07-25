@@ -41,7 +41,9 @@ export class FollowService {
       followingId: chanelId,
     });
 
-    await this.notificationService.createFollowNotification(follow.following.id, follow.follower);
+    if (follow.following.notificationSetting?.siteNotificationEnabled) {
+      await this.notificationService.createFollowNotification(follow.following.id, follow.follower);
+    }
 
     return follow;
   }

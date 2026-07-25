@@ -46,4 +46,12 @@ export class ChatRepository {
 
     return message;
   }
+
+  async deleteMessagesByStreamId(streamId: string) {
+    await this.prismaService.chatMessage.deleteMany({
+      where: {
+        streamId,
+      },
+    });
+  }
 }

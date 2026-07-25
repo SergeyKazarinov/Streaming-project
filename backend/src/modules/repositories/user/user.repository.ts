@@ -89,12 +89,15 @@ export class UserRepository {
     });
   }
 
-  async updateUser(id: string, user: UserUpdateInput): Promise<User> {
+  async updateUser(id: string, user: UserUpdateInput) {
     return await this.prismaService.user.update({
       where: {
         id,
       },
       data: user,
+      include: {
+        notificationSetting: true,
+      },
     });
   }
 

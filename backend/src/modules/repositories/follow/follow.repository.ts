@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { FollowCreateArgs, FollowDeleteArgs, type FollowModel, FollowWhereInput } from 'prisma/generated/prisma/models';
+import { FollowCreateArgs, FollowDeleteArgs, FollowWhereInput } from 'prisma/generated/prisma/models';
 
 import { PrismaService } from '@/core/prisma/prisma.service';
 
@@ -7,22 +7,29 @@ import { PrismaService } from '@/core/prisma/prisma.service';
 export class FollowRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async findFollowers(followerId: string): Promise<FollowModel[]> {
+  async findFollowers(followerId: string) {
     return await this.prismaService.follow.findMany({
       where: {
         followerId,
+        follower: {
+          isDeactivated: false,
+        },
       },
       orderBy: {
         createdAt: 'desc',
       },
       include: {
-        follower: true,
+        follower: {
+          include: {
+            notificationSetting: true,
+          },
+        },
         following: true,
       },
     });
   }
 
-  async findFollowing(followingId: string): Promise<FollowModel[]> {
+  async findFollowing(followingId: string) {
     return await this.prismaService.follow.findMany({
       where: {
         followingId,
@@ -37,7 +44,7 @@ export class FollowRepository {
     });
   }
 
-  async findFirst(where: FollowWhereInput): Promise<FollowModel | null> {
+  async findFirst(where: FollowWhereInput) {
     return await this.prismaService.follow.findFirst({
       where,
     });
@@ -48,12 +55,16 @@ export class FollowRepository {
       data,
       include: {
         follower: true,
-        following: true,
+        following: {
+          include: {
+            notificationSetting: true,
+          },
+        },
       },
     });
   }
 
-  async delete(where: FollowDeleteArgs['where']): Promise<FollowModel> {
+  async delete(where: FollowDeleteArgs['where']) {
     return await this.prismaService.follow.delete({
       where,
       include: {
@@ -63,7 +74,7 @@ export class FollowRepository {
     });
   }
 
-  async findFollowersCountByUserId(userId: string): Promise<number> {
+  async findFollowersCountByUserId(userId: string) {
     return await this.prismaService.follow.count({
       where: {
         followingId: userId,

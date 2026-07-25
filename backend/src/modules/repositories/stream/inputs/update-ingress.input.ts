@@ -14,4 +14,4 @@ export type UpdateIngressIsLiveInput = {
   isLive: boolean;
 };
 
-export type ReturnUpdatedStreamModel = Omit<StreamModel, 'user'>;
+export type ReturnUpdatedStreamModel = StreamModel;
