@@ -17,6 +17,5 @@ export enum TELEGRAM_BUTTONS_CALLBACK {
   SETTINGS = 'settings',
   FOLLOWERS = 'followers',
   SUBSCRIPTIONS = 'subscriptions',
-  WEBSITE = 'website',
   LOGOUT = 'logout',
 }

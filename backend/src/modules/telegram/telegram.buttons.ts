@@ -12,7 +12,7 @@ export const TELEGRAM_BUTTONS = {
       Markup.button.callback('👥 Подписчики', TELEGRAM_BUTTONS_CALLBACK.FOLLOWERS),
       Markup.button.callback('⭐ Подписки', TELEGRAM_BUTTONS_CALLBACK.SUBSCRIPTIONS),
     ],
-    [Markup.button.callback('🌐 Открыть сайт', TELEGRAM_BUTTONS_CALLBACK.WEBSITE)],
+    [Markup.button.url('🌐 Открыть сайт', 'https://tlgrm.ru/docs/bots#deep-linking')],
     [Markup.button.callback('Выйти', TELEGRAM_BUTTONS_CALLBACK.LOGOUT)],
   ]),
 } as const;
