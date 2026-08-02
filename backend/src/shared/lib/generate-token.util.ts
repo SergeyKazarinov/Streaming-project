@@ -25,14 +25,14 @@ export const generateToken = async ({
   user,
   type,
   isUUID = true,
-  expiresInTime = 1000 * 60 * 60 * 24,
+  expiresInTime = 1_000 * 60 * 60 * 24,
 }: IGenerateTokenConfig): Promise<Token> => {
   let token: string;
 
   if (isUUID) {
     token = uuidv4();
   } else {
-    token = Math.floor(Math.random() * (1000000 - 100000) + 100000).toString();
+    token = Math.floor(Math.random() * (1_000_000 - 100_000) + 100_000).toString();
   }
 
   const expiresIn = new Date(Date.now() + expiresInTime);

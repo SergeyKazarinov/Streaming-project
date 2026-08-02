@@ -16,16 +16,14 @@ export class NotificationRepository {
   }
 
   async changeNotificationSetting(userId: string, input: UpdateNotificationInput) {
-    const { siteNotificationEnabled } = input;
-
     return await this.prismaService.notificationSetting.upsert({
       where: { userId },
       create: {
         userId,
-        siteNotificationEnabled: siteNotificationEnabled,
+        ...input,
       },
       update: {
-        siteNotificationEnabled: siteNotificationEnabled,
+        ...input,
       },
       include: {
         user: true,

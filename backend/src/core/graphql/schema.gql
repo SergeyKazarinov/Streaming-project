@@ -234,7 +234,7 @@ type Mutation {
   resetPassword(data: ResetPasswordInput!): Boolean!
   sendMessage(data: ChatMessageInput!, streamId: String!): ChatMessageModel!
   unfollow(chanelId: String!): FollowModel!
-  updateNotificationSetting(input: UpdateNotificationInput!): NotificationSettingModel!
+  updateNotificationSetting(input: UpdateNotificationInput!): UpdatedNotificationSettingModel!
   updatePassword(data: UpdatePasswordInput!): Boolean!
   updateSocialLink(data: UpdateSocialLinkInput!): SocialLinkModel!
   verifyAccount(data: VerificationInput!): SecureUserModel!
@@ -272,6 +272,9 @@ type NotificationSettingModel {
 
   """Статус включения уведомлений на сайте"""
   siteNotificationEnabled: Boolean!
+
+  """Статус включения уведомлений на сайте"""
+  telegramNotificationEnabled: Boolean!
 
   """Дата обновления"""
   updatedAt: DateTime!
@@ -380,6 +383,9 @@ type SecureUserModel {
   """Стрим пользователя"""
   stream: StreamModel
 
+  """ID чата в телеграмме"""
+  telegramChatId: String
+
   """Секретный ключ TOTP пользователя"""
   totpSecret: String
 
@@ -484,6 +490,9 @@ type TotpModel {
 input UpdateNotificationInput {
   """Включены ли уведомления на сайте"""
   siteNotificationEnabled: Boolean
+
+  """Включены ли уведомления в телеграмме"""
+  telegramNotificationEnabled: Boolean
 }
 
 input UpdatePasswordInput {
@@ -507,6 +516,14 @@ input UpdateSocialLinkInput {
 
   """URL ссылки"""
   url: String
+}
+
+type UpdatedNotificationSettingModel {
+  """Токен для верификации в телеграмме"""
+  telegramToken: String!
+
+  """Статус обновления настройки уведомлений"""
+  updated: Boolean!
 }
 
 """The `Upload` scalar type represents a file upload."""
@@ -567,6 +584,9 @@ type UserModel {
 
   """Стрим пользователя"""
   stream: StreamModel
+
+  """ID чата в телеграмме"""
+  telegramChatId: String
 
   """Секретный ключ TOTP пользователя"""
   totpSecret: String

@@ -32,6 +32,7 @@ model User {
   followings          Follow[]             @relation("followings")
   notification        Notification[]
   notificationSetting NotificationSetting?
+  telegramChatId      String?              @map("telegram_chat_id")
 
   @@map("users")
 }
@@ -50,12 +51,13 @@ model Notification {
 }
 
 model NotificationSetting {
-  id                      String    @id @default(uuid())
-  user                    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId                  String    @unique @map("user_id")
-  siteNotificationEnabled Boolean   @default(true) @map("site_notification_enabled")
-  createdAt               DateTime  @default(now()) @map("created_at")
-  updatedAt               DateTime? @updatedAt @map("updated_at")
+  id                          String    @id @default(uuid())
+  user                        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                      String    @unique @map("user_id")
+  siteNotificationEnabled     Boolean   @default(true) @map("site_notification_enabled")
+  telegramNotificationEnabled Boolean   @default(false) @map("telegram_notification_enabled")
+  createdAt                   DateTime  @default(now()) @map("created_at")
+  updatedAt                   DateTime? @updatedAt @map("updated_at")
 
   @@map("notification_settings")
 }
@@ -150,6 +152,7 @@ model Follow {
 
 enum TokenType {
   EMAIL_VERIFY
+  TELEGRAM_VERIFY
   RESET_PASSWORD
   DEACTIVATE_ACCOUNT
 

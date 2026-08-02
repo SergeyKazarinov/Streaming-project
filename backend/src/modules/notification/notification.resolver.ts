@@ -6,7 +6,8 @@ import { Authorized } from '@/shared/decorators/authorized.decorator';
 
 import { UpdateNotificationInput } from './inputs/update-notification.input';
 import { NotificationModel } from './model/notification.model';
-import { NotificationSettingModel } from './model/notification-seting.model';
+import { NotificationSettingModel } from './model/notification-setting.model';
+import { UpdatedNotificationSettingModel } from './model/updated-notification-setting.model';
 import { NotificationService } from './notification.service';
 
 @Authorization()
@@ -31,7 +32,7 @@ export class NotificationResolver {
     return await this.notificationService.getNotificationSetting(user.id);
   }
 
-  @Mutation(() => NotificationSettingModel, { name: 'updateNotificationSetting' })
+  @Mutation(() => UpdatedNotificationSettingModel, { name: 'updateNotificationSetting' })
   async updateNotificationSetting(
     @Authorized() user: User,
     @Args('input') input: UpdateNotificationInput,

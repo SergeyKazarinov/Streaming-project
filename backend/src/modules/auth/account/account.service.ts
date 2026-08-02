@@ -66,7 +66,9 @@ export class AccountService extends BaseUserService {
 
     await this.verificationService.sendVerificationToken(user);
 
-    await this.notificationRepository.changeNotificationSetting(user.id, { siteNotificationEnabled: true });
+    await this.notificationRepository.changeNotificationSetting(user.id, {
+      siteNotificationEnabled: true,
+    });
 
     return true;
   }

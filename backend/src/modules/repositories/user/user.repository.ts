@@ -37,6 +37,19 @@ export class UserRepository {
     });
   }
 
+  async findUserByTelegramChatId(telegramChatId: string) {
+    return await this.prismaService.user.findFirst({
+      where: {
+        telegramChatId,
+      },
+      include: {
+        stream: true,
+        notificationSetting: true,
+        _count: { select: { followers: true, followings: true } },
+      },
+    });
+  }
+
   async findUniqueUserByUsername(username: string): Promise<User | null> {
     return await this.prismaService.user.findUnique({
       where: {

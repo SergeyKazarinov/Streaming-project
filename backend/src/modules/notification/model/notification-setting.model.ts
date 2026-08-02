@@ -13,4 +13,7 @@ export class NotificationSettingModel extends MetaModel implements NotificationS
 
   @Field(() => Boolean, { description: 'Статус включения уведомлений на сайте' })
   siteNotificationEnabled!: boolean;
+
+  @Field(() => Boolean, { description: 'Статус включения уведомлений на сайте' })
+  telegramNotificationEnabled!: boolean;
 }

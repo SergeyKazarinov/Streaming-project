@@ -8,5 +8,11 @@ export class UpdateNotificationInput {
   @ValidatorFactory({
     isOptional: true,
   })
-  siteNotificationEnabled!: boolean;
+  siteNotificationEnabled?: boolean;
+
+  @Field(() => Boolean, { nullable: true, description: 'Включены ли уведомления в телеграмме' })
+  @ValidatorFactory({
+    isOptional: true,
+  })
+  telegramNotificationEnabled?: boolean;
 }

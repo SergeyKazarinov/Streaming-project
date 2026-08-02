@@ -1,11 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { NotificationType } from 'prisma/generated/prisma/enums';
+import { NotificationType, TokenType } from 'prisma/generated/prisma/enums';
+
+import { generateToken } from '@/shared/lib/generate-token.util';
 
 import type { SecureUserModel } from '../auth/account/models/user.model';
 import { NotificationRepository } from '../repositories/notification/notification.repository';
 import type { StreamModel } from '../stream/model/stream.model';
 
 import { UpdateNotificationInput } from './inputs/update-notification.input';
+import type { UpdatedNotificationSettingModel } from './model/updated-notification-setting.model';
 
 @Injectable()
 export class NotificationService {
@@ -18,8 +21,21 @@ export class NotificationService {
   async changeNotificationSetting(
     userId: string,
     input: UpdateNotificationInput,
-  ): Promise<ReturnType<NotificationRepository['changeNotificationSetting']>> {
-    return await this.notificationRepository.changeNotificationSetting(userId, input);
+  ): Promise<UpdatedNotificationSettingModel> {
+    const updatedNotificationSetting = await this.notificationRepository.changeNotificationSetting(userId, input);
+
+    let token: Nullable<string> = null;
+    if (updatedNotificationSetting.telegramNotificationEnabled) {
+      const generatedToken = await generateToken({
+        user: updatedNotificationSetting.user,
+        type: TokenType.TELEGRAM_VERIFY,
+      });
+      token = generatedToken.token;
+    }
+    return {
+      updated: true,
+      telegramToken: token,
+    };
   }
 
   async getNotificationCount(userId: string): Promise<ReturnType<NotificationRepository['getNotificationCount']>> {
