@@ -76,5 +76,25 @@ export const TELEGRAM_MESSAGE = {
         `📅 На сайте с ${registeredAt}`,
       ].join('\n');
     },
+    FOLLOWERS: (followers: TUser[]) => {
+      const count = followers.length;
+
+      let list = '';
+
+      if (count === 0) {
+        list = 'Пока никого нет';
+      } else {
+        list = followers
+          .map((user, index) => {
+            const href = `https://github.com/${user.username}`;
+            const label = escapeHtml(user.username);
+
+            return `${index + 1}. <a href="${href}">${label}</a>`;
+          })
+          .join('\n');
+      }
+
+      return [`👥 <b>Подписчики</b>`, '', `Всего: <b>${count}</b>`, '', list].join('\n');
+    },
   },
 } as const;

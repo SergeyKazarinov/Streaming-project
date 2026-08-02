@@ -46,6 +46,8 @@ export class UserRepository {
         stream: true,
         notificationSetting: true,
         _count: { select: { followers: true, followings: true } },
+        followers: true,
+        followings: true,
       },
     });
   }
