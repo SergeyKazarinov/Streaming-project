@@ -10,5 +10,6 @@ import { FollowService } from './follow.service';
 @Module({
   imports: [FollowRepositoryModule, NotificationModule],
   providers: [FollowResolver, FollowService],
+  exports: [FollowService],
 })
 export class FollowModule {}

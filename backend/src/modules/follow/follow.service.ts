@@ -14,11 +14,11 @@ export class FollowService {
     private readonly notificationService: NotificationService,
   ) {}
 
-  async findMyFollowers(user: User): Promise<ReturnType<typeof this.followRepository.findFollowers>> {
+  async findMyFollowers(user: User) {
     return await this.followRepository.findFollowers(user.id);
   }
 
-  async findMyFollowings(user: User): Promise<ReturnType<typeof this.followRepository.findFollowing>> {
+  async findMyFollowings(user: User) {
     return await this.followRepository.findFollowing(user.id);
   }
 

@@ -7,10 +7,10 @@ import { PrismaService } from '@/core/prisma/prisma.service';
 export class FollowRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async findFollowers(followerId: string) {
+  async findFollowers(followingId: string) {
     return await this.prismaService.follow.findMany({
       where: {
-        followerId,
+        followingId,
         follower: {
           isDeactivated: false,
         },
@@ -29,10 +29,10 @@ export class FollowRepository {
     });
   }
 
-  async findFollowing(followingId: string) {
+  async findFollowing(followerId: string) {
     return await this.prismaService.follow.findMany({
       where: {
-        followingId,
+        followerId,
       },
       orderBy: {
         createdAt: 'desc',
@@ -78,6 +78,9 @@ export class FollowRepository {
     return await this.prismaService.follow.count({
       where: {
         followingId: userId,
+        follower: {
+          isDeactivated: false,
+        },
       },
     });
   }
