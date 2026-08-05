@@ -9,8 +9,8 @@ import { TELEGRAM_MESSAGE } from '@/shared/consts/message.const';
 import { ICallbackStrategy } from '../types/callback-strategy.interface';
 import { TContext, TELEGRAM_BUTTONS_CALLBACK } from '../types/common';
 @Injectable()
-export class TelegramFollowersStrategy implements ICallbackStrategy {
-  readonly dataType: TELEGRAM_BUTTONS_CALLBACK = TELEGRAM_BUTTONS_CALLBACK.FOLLOWERS;
+export class TelegramFollowingsStrategy implements ICallbackStrategy {
+  readonly dataType: TELEGRAM_BUTTONS_CALLBACK = TELEGRAM_BUTTONS_CALLBACK.SUBSCRIPTIONS;
 
   constructor(
     private readonly userRepository: UserRepository,
@@ -24,11 +24,11 @@ export class TelegramFollowersStrategy implements ICallbackStrategy {
     if (!user) {
       return;
     }
-    const followers = await this.followService.findMyFollowers(user);
+    const followings = await this.followService.findMyFollowings(user);
 
     await ctx.replyWithHTML(
-      TELEGRAM_MESSAGE.INFO.FOLLOWERS(
-        followers.map((follower) => follower.follower),
+      TELEGRAM_MESSAGE.INFO.FOLLOWINGS(
+        followings.map((following) => following.following),
         this.configService.get<string>('ALLOWED_ORIGINS') || '',
       ),
     );

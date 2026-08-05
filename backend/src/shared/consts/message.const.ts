@@ -1,6 +1,7 @@
 import type { User } from 'prisma/generated/prisma/client';
 
 import { escapeHtml } from '../lib/escape-html.util';
+import { getChannelList } from '../lib/get-channel-list.util';
 
 type TUser = User & {
   _count?: { followers: number; followings: number };
@@ -76,25 +77,30 @@ export const TELEGRAM_MESSAGE = {
         `📅 На сайте с ${registeredAt}`,
       ].join('\n');
     },
-    FOLLOWERS: (followers: TUser[]) => {
+    FOLLOWERS: (followers: TUser[], domain: string) => {
       const count = followers.length;
-
       let list = '';
 
       if (count === 0) {
         list = 'Пока никого нет';
       } else {
-        list = followers
-          .map((user, index) => {
-            const href = `https://github.com/${user.username}`;
-            const label = escapeHtml(user.username);
-
-            return `${index + 1}. <a href="${href}">${label}</a>`;
-          })
-          .join('\n');
+        list = getChannelList(followers, domain);
       }
 
       return [`👥 <b>Подписчики</b>`, '', `Всего: <b>${count}</b>`, '', list].join('\n');
+    },
+
+    FOLLOWINGS: (followings: TUser[], domain: string) => {
+      const count = followings.length;
+      let list = '';
+
+      if (count === 0) {
+        list = 'Вы пока ни на кого не подписаны';
+      } else {
+        list = getChannelList(followings, domain);
+      }
+
+      return [`👥 <b>Вы подписаны на следующие каналы</b>`, '', `Всего: <b>${count}</b>`, '', list].join('\n');
     },
   },
 } as const;

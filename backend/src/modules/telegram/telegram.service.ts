@@ -80,6 +80,7 @@ export class TelegramService {
   @On('callback_query')
   async callbackQuery(@Ctx() ctx: TContext) {
     const dataType = ctx.update.callback_query.data;
+
     const strategy = this.TelegramCallbackRegistry.findStrategy(dataType);
 
     await strategy?.execute(ctx);

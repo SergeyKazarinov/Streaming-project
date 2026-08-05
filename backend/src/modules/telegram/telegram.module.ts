@@ -8,11 +8,12 @@ import { UserModule } from '../repositories/user/user.module';
 
 import { TelegramCallbackRegistry } from './strategies/telegram-callback.registry';
 import { TelegramFollowersStrategy } from './strategies/telegram-followers.strategy';
+import { TelegramFollowingsStrategy } from './strategies/telegram-followings.strategy';
 import { TelegramProfileStrategy } from './strategies/telegram-profile.strategy';
 import { ICallbackStrategy } from './types/callback-strategy.interface';
 import { TelegramService } from './telegram.service';
 
-const strategies = [TelegramProfileStrategy, TelegramFollowersStrategy];
+const strategies = [TelegramProfileStrategy, TelegramFollowersStrategy, TelegramFollowingsStrategy];
 
 @Module({
   imports: [UserModule, TokenModule, FollowModule],
