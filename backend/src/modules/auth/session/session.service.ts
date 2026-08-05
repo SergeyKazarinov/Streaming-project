@@ -22,6 +22,8 @@ import { LoginInput } from './inputs/login.input';
 
 @Injectable()
 export class SessionService extends BaseUserService {
+  private readonly SESSION_FOLDER: string;
+
   constructor(
     private readonly configService: ConfigService,
     private readonly verificationService: VerificationService,
@@ -30,6 +32,7 @@ export class SessionService extends BaseUserService {
     @Inject(REDIS_KEY) private readonly redisClient: RedisClientType,
   ) {
     super(userRepository);
+    this.SESSION_FOLDER = configService.getOrThrow<string>('SESSION_FOLDER');
   }
 
   async login(req: Request, input: LoginInput, userAgent: string): Promise<AuthModel> {
@@ -112,9 +115,7 @@ export class SessionService extends BaseUserService {
   async findCurrent(req: Request) {
     const sessionId = req.session.id;
 
-    const sessionData = await this.redisClient.get(
-      `${this.configService.getOrThrow<string>('SESSION_FOLDER')}${sessionId}`,
-    );
+    const sessionData = await this.redisClient.get(`${this.SESSION_FOLDER}${sessionId}`);
 
     if (!sessionData) {
       throw new NotFoundException(MESSAGE.ERROR.NOT_FOUNT_SESSION);
@@ -139,8 +140,24 @@ export class SessionService extends BaseUserService {
       throw new ConflictException(MESSAGE.ERROR.CONFLICT_REMOVE_SESSION);
     }
 
-    await this.redisClient.del(`${this.configService.getOrThrow<string>('SESSION_FOLDER')}${id}`);
+    await this.redisClient.del(`${this.SESSION_FOLDER}${id}`);
 
     return true;
+  }
+
+  async removeSessionByUserId(userId: string) {
+    const keys = await this.redisClient.keys(`${this.SESSION_FOLDER}*`);
+
+    for (const key of keys) {
+      const sessionRaw = await this.redisClient.get(key);
+      if (!sessionRaw) continue;
+
+      const session = JSON.parse(sessionRaw) as SessionData;
+
+      if (session.userId === userId) {
+        await this.redisClient.del(key);
+        break;
+      }
+    }
   }
 }

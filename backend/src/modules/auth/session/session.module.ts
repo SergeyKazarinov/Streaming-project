@@ -10,5 +10,6 @@ import { SessionService } from './session.service';
 @Module({
   imports: [VerificationModule, TokenModule],
   providers: [SessionResolver, SessionService],
+  exports: [SessionService],
 })
 export class SessionModule {}
