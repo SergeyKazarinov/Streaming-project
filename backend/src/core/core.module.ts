@@ -1,4 +1,4 @@
-import { TelegrafModule } from 'nestjs-telegraf';
+// import { TelegrafModule } from 'nestjs-telegraf';
 import { ApolloDriver } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -25,18 +25,19 @@ import { UserModule } from '@/modules/repositories/user/user.module';
 import { SocialModule } from '@/modules/social/social.module';
 import { IngressModule } from '@/modules/stream/ingress/ingress/ingress.module';
 import { StreamModule } from '@/modules/stream/stream.module';
-import { TelegramModule } from '@/modules/telegram/telegram.module';
+// import { TelegramModule } from '@/modules/telegram/telegram.module';
 import { WebhookModule } from '@/modules/webhook/webhook.module';
 
 import { envConfig } from '@/shared/config/env-config';
 import { getGraphQLConfig } from '@/shared/config/graphql.config';
 import { getLivekitConfig } from '@/shared/config/livekit.config';
-import { getTelegramConfig } from '@/shared/config/telegram.config';
+// import { getTelegramConfig } from '@/shared/config/telegram.config';
 import { IS_DEV_ENV } from '@/shared/lib/is-dev';
 
 import { PrismaModule } from './prisma/prisma.module';
 import { RedisModule } from './redis/redis.module';
 
+//? Временно отключил телеграм из-за VPN
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -44,11 +45,11 @@ import { RedisModule } from './redis/redis.module';
       ignoreEnvFile: !IS_DEV_ENV,
       isGlobal: true,
     }),
-    TelegrafModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: getTelegramConfig,
-      inject: [ConfigService],
-    }),
+    // TelegrafModule.forRootAsync({
+    //   imports: [ConfigModule],
+    //   useFactory: getTelegramConfig,
+    //   inject: [ConfigService],
+    // }),
     GraphQLModule.forRootAsync({
       driver: ApolloDriver,
       imports: [ConfigModule],
@@ -83,7 +84,7 @@ import { RedisModule } from './redis/redis.module';
     FollowModule,
     ChannelModule,
     NotificationModule,
-    TelegramModule,
+    // TelegramModule,
   ],
 })
 export class CoreModule {}

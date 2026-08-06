@@ -45,6 +45,10 @@ export class FollowService {
       await this.notificationService.createFollowNotification(follow.following.id, follow.follower);
     }
 
+    // if (follow.following.notificationSetting?.telegramNotificationEnabled && follow.following.telegramChatId) {
+    //   await this.telegramService.sendNotification(follow.following.telegramChatId);
+    // }
+
     return follow;
   }
 

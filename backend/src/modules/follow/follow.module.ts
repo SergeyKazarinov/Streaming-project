@@ -1,8 +1,7 @@
 import { Module } from '@nestjs/common';
 
+import { NotificationModule } from '@/modules/notification/notification.module';
 import { FollowRepositoryModule } from '@/modules/repositories/follow/follow-repository.module';
-
-import { NotificationModule } from '../notification/notification.module';
 
 import { FollowResolver } from './follow.resolver';
 import { FollowService } from './follow.service';

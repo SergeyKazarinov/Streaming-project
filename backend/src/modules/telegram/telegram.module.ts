@@ -34,5 +34,6 @@ const strategies = [
       inject: strategies,
     },
   ],
+  exports: [TelegramService],
 })
 export class TelegramModule {}

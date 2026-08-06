@@ -1,7 +1,8 @@
 import { Ctx, On, Start, Update } from 'nestjs-telegraf';
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { TokenType } from 'prisma/generated/prisma/enums';
-import { type Context } from 'telegraf';
+import { type Context, Telegraf } from 'telegraf';
 
 import { TELEGRAM_MESSAGE } from '@/shared/consts/message.const';
 import { checkToken } from '@/shared/lib/check-token.util';
@@ -15,15 +16,18 @@ import { TELEGRAM_BUTTONS } from './telegram.buttons';
 
 @Update()
 @Injectable()
-export class TelegramService {
+export class TelegramService extends Telegraf {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly tokenRepository: TokenRepository,
     private readonly TelegramCallbackRegistry: TelegramCallbackRegistry,
-  ) {}
-
+    private readonly configService: ConfigService,
+  ) {
+    super(configService.getOrThrow<string>('TELEGRAM_BOT_TOKEN'));
+  }
+  // TODO доработать логику отправки уведомлений пользователю
   @Start()
-  async start(@Ctx() ctx: TContext) {
+  async onStart(@Ctx() ctx: TContext) {
     const token = ctx.payload;
 
     const telegramChatId = ctx.chat?.id?.toString();
@@ -84,5 +88,9 @@ export class TelegramService {
     const strategy = this.TelegramCallbackRegistry.findStrategy(dataType);
 
     await strategy?.execute(ctx);
+  }
+
+  async sendNotification(chatId: string) {
+    await this.telegram.sendMessage(chatId, 'test follow');
   }
 }
