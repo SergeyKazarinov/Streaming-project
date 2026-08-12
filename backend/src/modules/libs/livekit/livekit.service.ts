@@ -5,9 +5,9 @@ import { LIVEKIT_OPTIONS_SYMBOL, TLiveKitOptions } from '@/shared/types/livekit.
 
 @Injectable()
 export class LivekitService {
-  private roomService: RoomServiceClient;
-  private webhookReceiver: WebhookReceiver;
-  private ingestService: IngressClient;
+  private readonly roomService: RoomServiceClient;
+  private readonly webhookReceiver: WebhookReceiver;
+  private readonly ingestService: IngressClient;
 
   constructor(@Inject(LIVEKIT_OPTIONS_SYMBOL) private readonly options: TLiveKitOptions) {
     this.roomService = new RoomServiceClient(this.options.apiUrl, this.options.apiKey, this.options.apiSecret);
