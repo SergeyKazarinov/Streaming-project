@@ -112,7 +112,7 @@ class ValidatorFactoryClass {
       );
     }
 
-    if (config.length && config.length.min && config.length.max) {
+    if (config.length?.min && config.length?.max) {
       decorators.push(
         Length(config.length.min, config.length.max, {
           message: ({ property }: ValidationArguments) =>
