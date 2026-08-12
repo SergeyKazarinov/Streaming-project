@@ -1,98 +1,102 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Архитектура и устройство проекта
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## 1) Структура
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+- **Точка входа** (`src/main.ts`): bootstrap NestJS-приложения, сессии, CORS, загрузка файлов.
+- **Core-модуль** (`src/core/**`): глобальная сборка приложения — Prisma, Redis, GraphQL.
+- **Feature-модули** (`src/modules/**`): бизнес-логика по доменам (auth, stream, follow, chat и т. д.).
+- **Репозитории** (`src/modules/repositories/**`): слой доступа к данным через Prisma.
+- **Инфраструктурные библиотеки** (`src/modules/libs/**`): LiveKit, S3-хранилище, GraphQL subscriptions.
+- **Shared** (`src/shared/**`): декораторы, guards, pipes, конфиги, утилиты, шаблоны писем.
+- **Prisma** (`prisma/**`): схема БД, миграции, seed.
 
-## Description
+## 2) Карта каталогов
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Project setup
-
-```bash
-$ yarn install
+```
+backend/
+├── src/
+│   ├── main.ts                    # Bootstrap приложения
+│   ├── core/
+│   │   ├── core.module.ts         # Корневой NestJS-модуль
+│   │   ├── prisma/                # PrismaService, seed
+│   │   ├── redis/                 # Redis-клиент (сессии)
+│   │   └── graphql/
+│   │       └── schema.gql         # Автогенерируемая GraphQL-схема
+│   ├── modules/
+│   │   ├── auth/                  # account, session, profile, totp, verification, reset-password, deactivate
+│   │   ├── stream/                # Стримы, ingress (LiveKit)
+│   │   ├── category/              # Категории стримов
+│   │   ├── channel/               # Публичные страницы каналов
+│   │   ├── follow/                # Подписки
+│   │   ├── chat-message/          # Чат стрима + subscriptions
+│   │   ├── notification/          # Уведомления
+│   │   ├── social/                # Социальные ссылки профиля
+│   │   ├── mail/                  # Отправка email (React Email)
+│   │   ├── webhook/               # Webhook LiveKit (REST)
+│   │   ├── cron/                  # Планировщик задач
+│   │   ├── telegram/              # Telegram-бот (временно отключён)
+│   │   ├── repositories/          # Prisma-репозитории
+│   │   └── libs/                  # livekit, storage (S3), subscriptions
+│   └── shared/                    # Общие декораторы, guards, config, utils
+├── prisma/
+│   ├── schema.prisma              # Модель данных
+│   ├── migrations/                # SQL-миграции
+│   └── generated/prisma/          # Сгенерированный Prisma Client
+├── docs/                          # Документация
+└── docker-compose.yaml            # PostgreSQL + Redis
 ```
 
-## Compile and run the project
+## 3) GraphQL
 
-```bash
-# development
-$ yarn run start
+- **Code-first подход**: резолверы и модели описаны в TypeScript, схема генерируется автоматически в `src/core/graphql/schema.gql`.
+- **Конфигурация**: `src/shared/config/graphql.config.ts` — Apollo Driver, GraphiQL в dev, subscriptions через `graphql-ws`.
+- **Защита эндпоинтов**: декоратор `@Authorization()` + `GqlAuthGuard` проверяют сессию пользователя.
+- **Подписки**: чат стрима (`subscribeChat`) через `PubSub` и WebSocket.
 
-# watch mode
-$ yarn run start:dev
+Подробнее — см. раздел [GraphQL](docs/graphql.md).
 
-# production mode
-$ yarn run start:prod
-```
+## 4) Доступ к данным (Prisma)
 
-## Run tests
+- **ORM**: Prisma 7 с PostgreSQL-адаптером (`@prisma/adapter-pg`).
+- **Схема**: `prisma/schema.prisma` — единый источник правды для моделей.
+- **Репозитории**: инкапсулируют запросы Prisma (`UserRepository`, `StreamRepository` и т. д.), сервисы не обращаются к `PrismaService` напрямую.
+- **Миграции**: `prisma migrate` / `yarn db:push`; seed — `yarn db:seed`.
 
-```bash
-# unit tests
-$ yarn run test
+## 5) NestJS-модули (сборка приложения)
 
-# e2e tests
-$ yarn run test:e2e
+- `CoreModule` импортирует все feature-модули и инфраструктуру.
+- `ConfigModule.forRoot` загружает переменные окружения через `envConfig`.
+- Зависимости внедряются через DI NestJS (`@Injectable`, `@Module`).
+- Cron-задачи (`@nestjs/schedule`) — очистка деактивированных аккаунтов, предупреждения об удалении.
 
-# test coverage
-$ yarn run test:cov
-```
+## 6) Схема БД (обзор)
 
-## Deployment
+Ключевые сущности:
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+| Таблица                 | Назначение                                                  |
+| ----------------------- | ----------------------------------------------------------- |
+| `users`                 | Пользователи, профиль, TOTP, верификация                    |
+| `streams`               | Канал/стрим пользователя, статус эфира, LiveKit ingress     |
+| `categories`            | Категории стримов                                           |
+| `chat_messages`         | Сообщения чата                                              |
+| `follows`               | Подписки (follower → following)                             |
+| `notifications`         | Уведомления пользователя                                    |
+| `notification_settings` | Настройки уведомлений (сайт / Telegram)                     |
+| `social_links`          | Ссылки на соцсети в профиле                                 |
+| `tokens`                | Одноразовые токены (верификация, сброс пароля, деактивация) |
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+Детали — см. раздел [Модель данных](docs/db.md).
 
-```bash
-$ yarn install -g @nestjs/mau
-$ mau deploy
-```
+---
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+# [Конфиги](docs/config.md)
 
-## Resources
+# [Модель данных](docs/db.md)
 
-Check out a few resources that may come in handy when working with NestJS:
+# [GraphQL](docs/graphql.md)
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+# [Авторизация пользователей](docs/auth.md)
 
-## Support
+# [Стриминг и LiveKit](docs/stream.md)
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+# [Deploy](docs/deploy.md)
