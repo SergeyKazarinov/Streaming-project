@@ -53,10 +53,10 @@ export const ms = (str: StringValue): number => {
 
   const groups = match?.groups as { value: string; type?: string } | undefined;
   if (!groups) {
-    return NaN;
+    return Number.NaN;
   }
 
-  const n = parseFloat(groups.value);
+  const n = Number.parseFloat(groups.value);
   const type = (groups.type || 'ms').toLowerCase() as Lowercase<Unit>;
 
   switch (type) {
