@@ -60,6 +60,8 @@ export const TELEGRAM_MESSAGE = {
         year: 'numeric',
       });
 
+      const streamStatus = user.stream?.isLive ? `🔴 В эфире: ${escapeHtml(user.stream.title)}` : '⚪ Оффлайн';
+
       return [
         `👤 <b>Профиль</b>`,
         '',
@@ -67,7 +69,7 @@ export const TELEGRAM_MESSAGE = {
         '',
         `👥 Подписчики: <b>${user._count?.followers ?? 0}</b>`,
         `⭐ Подписки: <b>${user._count?.followings ?? 0}</b>`,
-        `📺 Стрим: ${user.stream?.isLive ? `🔴 В эфире: ${escapeHtml(user.stream.title)}` : '⚪ Оффлайн'}`,
+        `📺 Стрим: ${streamStatus}`,
         '',
         `📧 Email: <code>${escapeHtml(user.email)}</code>`,
         `✉️ Почта: ${user.isEmailVerified ? 'подтверждена ✅' : 'не подтверждена'}`,
