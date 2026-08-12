@@ -1,3 +1,4 @@
+import { randomInt } from 'node:crypto';
 import type { Token, TokenType, User } from 'prisma/generated/prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -32,7 +33,7 @@ export const generateToken = async ({
   if (isUUID) {
     token = uuidv4();
   } else {
-    token = Math.floor(Math.random() * (1_000_000 - 100_000) + 100_000).toString();
+    token = randomInt(100_000, 1_000_000).toString();
   }
 
   const expiresIn = new Date(Date.now() + expiresInTime);
