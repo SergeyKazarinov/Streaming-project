@@ -1,6 +1,6 @@
 {
   "name": "streaming-project",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "scripts": {
     "install:all": "yarn install && cd backend && yarn install && cd ..",
     "prepare": "husky",
