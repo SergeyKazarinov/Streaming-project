@@ -79,28 +79,28 @@ export const TELEGRAM_MESSAGE = {
     },
     FOLLOWERS: (followers: TUser[], domain: string) => {
       const count = followers.length;
-      let list = '';
+      const userList = getChannelList(followers, domain);
 
-      if (count === 0) {
-        list = 'Пока никого нет';
-      } else {
-        list = getChannelList(followers, domain);
-      }
-
-      return [`👥 <b>Подписчики</b>`, '', `Всего: <b>${count}</b>`, '', list].join('\n');
+      return [
+        `👥 <b>Подписчики</b>`,
+        '',
+        `Всего: <b>${count === 0 ? 'Пока никого нет' : userList}</b>`,
+        '',
+        userList,
+      ].join('\n');
     },
 
     FOLLOWINGS: (followings: TUser[], domain: string) => {
       const count = followings.length;
-      let list = '';
+      const userList = getChannelList(followings, domain);
 
-      if (count === 0) {
-        list = 'Вы пока ни на кого не подписаны';
-      } else {
-        list = getChannelList(followings, domain);
-      }
-
-      return [`👥 <b>Вы подписаны на следующие каналы</b>`, '', `Всего: <b>${count}</b>`, '', list].join('\n');
+      return [
+        `👥 <b>Вы подписаны на следующие каналы</b>`,
+        '',
+        `Всего: <b>${count === 0 ? 'Вы пока ни на кого не подписаны' : userList}</b>`,
+        '',
+        userList,
+      ].join('\n');
     },
 
     LOGOUT: {
