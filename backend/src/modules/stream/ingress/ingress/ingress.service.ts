@@ -55,7 +55,7 @@ export class IngressService {
 
     const ingress = await this.livekitService.ingress.createIngress(ingressType, options);
 
-    if (!ingress || !ingress.url || !ingress.streamKey) {
+    if (!ingress?.url || !ingress?.streamKey) {
       throw new BadRequestException('Не удалось создать входной поток');
     }
 
