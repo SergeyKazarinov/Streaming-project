@@ -12,7 +12,7 @@ import { SessionMetadata } from '@/shared/types/session-metadata.types';
 
 @Injectable()
 export class MailService {
-  private domain: string;
+  private readonly domain: string;
 
   constructor(
     private readonly mailerService: MailerService,
