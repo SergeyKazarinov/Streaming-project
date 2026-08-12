@@ -51,6 +51,7 @@ export class DeactivateService extends BaseUserService {
       user,
       type: TokenType.DEACTIVATE_ACCOUNT,
       isUUID: false,
+      expiresInTime: 5 * 60 * 1000,
     });
 
     const metadata = getSessionMetadata(req, userAgent);
