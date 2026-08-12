@@ -101,7 +101,9 @@ export class SessionService extends BaseUserService {
       if (sessionData) {
         const session = JSON.parse(sessionData) as SessionData;
 
-        if ((session.userId = userId)) {
+        session.userId = userId;
+
+        if (session.userId) {
           userSessions.push({ ...session, id: key.split(':')[1] });
         }
       }
