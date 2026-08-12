@@ -9,6 +9,7 @@ export class BaseUserInput {
   @ValidatorFactory({
     isString: true,
     isNotEmpty: true,
+    maxLength: 32,
     matches: {
       regexp: ONLY_LATIN_ALPHABET_REGEX,
       message: ({ property }) => `Поле ${property} должно содержать только латинские буквы, цифры и символы - и _`,
