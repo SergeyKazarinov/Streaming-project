@@ -1,0 +1,124 @@
+import { Injectable } from '@nestjs/common';
+import { User } from 'prisma/generated/prisma/client';
+import {
+  UserCreateInput,
+  UserDeleteManyArgs,
+  UserFindManyArgs,
+  UserUpdateInput,
+  UserWhereInput,
+} from 'prisma/generated/prisma/models';
+
+import { PrismaService } from '@/core/prisma/prisma.service';
+
+@Injectable()
+export class UserRepository {
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async findUserByUsernameOrEmail(usernameOrEmail: string): Promise<User | null> {
+    return await this.prismaService.user.findFirst({
+      where: {
+        OR: [{ username: { equals: usernameOrEmail } }, { email: { equals: usernameOrEmail } }],
+      },
+      include: {
+        socialLinks: true,
+      },
+    });
+  }
+
+  async findUniqueUserById(id: string): Promise<User | null> {
+    return await this.prismaService.user.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        socialLinks: true,
+        notificationSetting: true,
+      },
+    });
+  }
+
+  async findUserByTelegramChatId(telegramChatId: string) {
+    return await this.prismaService.user.findFirst({
+      where: {
+        telegramChatId,
+      },
+      include: {
+        stream: true,
+        notificationSetting: true,
+        _count: { select: { followers: true, followings: true } },
+        followers: true,
+        followings: true,
+      },
+    });
+  }
+
+  async findUniqueUserByUsername(username: string): Promise<User | null> {
+    return await this.prismaService.user.findUnique({
+      where: {
+        username,
+      },
+      include: {
+        socialLinks: {
+          orderBy: {
+            order: 'asc',
+          },
+        },
+        stream: {
+          include: {
+            category: true,
+          },
+        },
+        followings: true,
+      },
+    });
+  }
+
+  async findUniqueUserByEmail(email: string): Promise<User | null> {
+    return await this.prismaService.user.findUnique({
+      where: {
+        email,
+      },
+      include: {
+        socialLinks: true,
+      },
+    });
+  }
+
+  async findMany(
+    where: UserWhereInput,
+    include: UserFindManyArgs['include'] = {},
+    orderBy: UserFindManyArgs['orderBy'] = {},
+    take: UserFindManyArgs['take'] = undefined,
+  ): Promise<User[]> {
+    return await this.prismaService.user.findMany({
+      where,
+      include,
+      orderBy,
+      take,
+    });
+  }
+
+  async createUser(user: UserCreateInput): Promise<User> {
+    return await this.prismaService.user.create({
+      data: user,
+    });
+  }
+
+  async updateUser(id: string, user: UserUpdateInput) {
+    return await this.prismaService.user.update({
+      where: {
+        id,
+      },
+      data: user,
+      include: {
+        notificationSetting: true,
+      },
+    });
+  }
+
+  async deleteMany(where: UserDeleteManyArgs['where']): Promise<void> {
+    await this.prismaService.user.deleteMany({
+      where,
+    });
+  }
+}

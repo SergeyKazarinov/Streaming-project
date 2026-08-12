@@ -1,14 +1,90 @@
+// import { TelegrafModule } from 'nestjs-telegraf';
+import { ApolloDriver } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { GraphQLModule } from '@nestjs/graphql';
+
+import { AccountModule } from '@/modules/auth/account/account.module';
+import { DeactivateModule } from '@/modules/auth/deactivate/deactivate.module';
+import { ProfileModule } from '@/modules/auth/profile/profile.module';
+import { ResetPasswordModule } from '@/modules/auth/reset-password/reset-password.module';
+import { SessionModule } from '@/modules/auth/session/session.module';
+import { TotpModule } from '@/modules/auth/totp/totp.module';
+import { VerificationModule } from '@/modules/auth/verification/verification.module';
+import { CategoryModule } from '@/modules/category/category.module';
+import { ChannelModule } from '@/modules/channel/channel.module';
+import { ChatMessageModule } from '@/modules/chat-message/chat-message.module';
+import { CronModule } from '@/modules/cron/cron.module';
+import { FollowModule } from '@/modules/follow/follow.module';
+import { LivekitModule } from '@/modules/libs/livekit/livekit.module';
+import { StorageModule } from '@/modules/libs/storage/storage.module';
+import { MailModule } from '@/modules/mail/mail.module';
+import { NotificationModule } from '@/modules/notification/notification.module';
+import { SocialLinksModule } from '@/modules/repositories/social/social-links.module';
+import { UserModule } from '@/modules/repositories/user/user.module';
+import { SocialModule } from '@/modules/social/social.module';
+import { IngressModule } from '@/modules/stream/ingress/ingress/ingress.module';
+import { StreamModule } from '@/modules/stream/stream.module';
+// import { TelegramModule } from '@/modules/telegram/telegram.module';
+import { WebhookModule } from '@/modules/webhook/webhook.module';
 
 import { envConfig } from '@/shared/config/env-config';
+import { getGraphQLConfig } from '@/shared/config/graphql.config';
+import { getLivekitConfig } from '@/shared/config/livekit.config';
+// import { getTelegramConfig } from '@/shared/config/telegram.config';
+import { IS_DEV_ENV } from '@/shared/lib/is-dev';
 
+import { PrismaModule } from './prisma/prisma.module';
+import { RedisModule } from './redis/redis.module';
+
+//? Временно отключил телеграм из-за VPN
 @Module({
   imports: [
     ConfigModule.forRoot({
       load: [envConfig],
+      ignoreEnvFile: !IS_DEV_ENV,
       isGlobal: true,
     }),
+    // TelegrafModule.forRootAsync({
+    //   imports: [ConfigModule],
+    //   useFactory: getTelegramConfig,
+    //   inject: [ConfigService],
+    // }),
+    GraphQLModule.forRootAsync({
+      driver: ApolloDriver,
+      imports: [ConfigModule],
+      useFactory: getGraphQLConfig,
+      inject: [ConfigService],
+    }),
+    LivekitModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: getLivekitConfig,
+      inject: [ConfigService],
+    }),
+    RedisModule,
+    PrismaModule,
+    UserModule,
+    MailModule,
+    VerificationModule,
+    AccountModule,
+    SessionModule,
+    ResetPasswordModule,
+    TotpModule,
+    DeactivateModule,
+    CronModule,
+    StorageModule,
+    ProfileModule,
+    SocialModule,
+    SocialLinksModule,
+    StreamModule,
+    IngressModule,
+    WebhookModule,
+    CategoryModule,
+    ChatMessageModule,
+    FollowModule,
+    ChannelModule,
+    NotificationModule,
+    // TelegramModule,
   ],
 })
 export class CoreModule {}

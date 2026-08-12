@@ -1,0 +1,603 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+"""Модель авторизации пользователя"""
+type AuthModel {
+  """Сообщение об ошибке"""
+  message: String
+
+  """Авторизованный пользователь"""
+  user: SecureUserModel
+}
+
+type CategoryModel {
+  """Дата создания"""
+  createdAt: DateTime!
+
+  """Описание категории"""
+  description: String
+  id: ID!
+
+  """Slug категории"""
+  slug: String!
+
+  """Стримы категории"""
+  streams: [StreamModel!]!
+
+  """URL preview категории"""
+  thumbnailUrl: String
+
+  """Название категории"""
+  title: String!
+
+  """Дата обновления"""
+  updatedAt: DateTime!
+}
+
+"""Изменение email пользователя"""
+input ChangeEmailInput {
+  """Новый Email пользователя"""
+  email: String!
+}
+
+"""Изменение пароля пользователя"""
+input ChangePasswordInput {
+  """Подтверждение нового пароля пользователя"""
+  confirmNewPassword: String!
+
+  """Новый пароль пользователя"""
+  newPassword: String!
+
+  """Текущий пароль пользователя"""
+  oldPassword: String!
+}
+
+input ChangeProfileInput {
+  """Биография пользователя"""
+  bio: String!
+
+  """Имя пользователя, отображаемое на сайте"""
+  displayName: String!
+
+  """Имя пользователя"""
+  username: String!
+}
+
+input ChangeStreamInfoInput {
+  """ID категории"""
+  categoryId: String
+
+  """Название стрима"""
+  title: String!
+}
+
+"""Сообщение в чате"""
+input ChatMessageInput {
+  """Текст сообщения"""
+  text: String!
+}
+
+type ChatMessageModel {
+  """Дата создания"""
+  createdAt: DateTime!
+  id: ID!
+
+  """Стрим с чатом"""
+  stream: StreamModel!
+
+  """id стрима"""
+  streamId: String!
+
+  """Текст сообщения"""
+  text: String!
+
+  """Дата обновления"""
+  updatedAt: DateTime!
+
+  """Пользователь"""
+  user: UserModel!
+
+  """id пользователя"""
+  userId: String!
+}
+
+input CreateSocialLinkInput {
+  """Название ссылки"""
+  title: String!
+
+  """URL ссылки"""
+  url: String!
+}
+
+"""Создание пользователя при регистрации"""
+input CreateUserInput {
+  """Email пользователя"""
+  email: String!
+
+  """Пароль пользователя"""
+  password: String!
+
+  """Имя пользователя"""
+  username: String!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+"""Форма для деактивации аккаунта"""
+input DeactivateInput {
+  """Код деактивации пользователя"""
+  deactivateToken: String
+
+  """Email пользователя"""
+  email: String!
+
+  """Пароль пользователя"""
+  password: String!
+}
+
+type DeviceModel {
+  browser: String!
+  os: String!
+  type: String!
+}
+
+input EnableTotpInput {
+  secret: String!
+  totpToken: String!
+}
+
+input FiltersInput {
+  """Количество записей, которые необходимо вернуть"""
+  limit: Float
+
+  """Количество записей, которые необходимо пропустить"""
+  offset: Float
+
+  """Поле поиска"""
+  searchTerm: String
+}
+
+type FollowModel {
+  """Дата создания"""
+  createdAt: DateTime!
+
+  """Подписчик"""
+  follower: SecureUserModel!
+
+  """id подписчика"""
+  followerId: String!
+
+  """Пользователь, на которого подписан"""
+  following: SecureUserModel!
+
+  """id пользователя, на которого подписан"""
+  followingId: String!
+  id: ID!
+
+  """Дата обновления"""
+  updatedAt: DateTime!
+}
+
+input GenerateStreamTokenInput {
+  """Идентификатор канала"""
+  chanelId: String!
+
+  """Идентификатор пользователя"""
+  userId: String!
+}
+
+type GenerateStreamTokenModel {
+  """Токен для стрима"""
+  token: String!
+}
+
+type LocationModel {
+  city: String!
+  country: String!
+  latidute: Float!
+  longitude: Float!
+}
+
+input LoginInput {
+  login: String!
+  password: String!
+  totpCode: String
+}
+
+type Mutation {
+  changeAvatar(data: Upload!): SecureUserModel!
+  changeEmail(data: ChangeEmailInput!): SecureUserModel!
+  changeInfoUser(data: ChangeProfileInput!): SecureUserModel!
+  changePassword(data: ChangePasswordInput!): SecureUserModel!
+  changeStreamInfo(data: ChangeStreamInfoInput!): StreamModel!
+  changeThumbnail(data: Upload!): StreamModel!
+  clearSessionCookie: Boolean!
+  createIngress(ingressType: Float!): Boolean!
+  createSocialLink(data: CreateSocialLinkInput!): SocialLinkModel!
+  createUser(data: CreateUserInput!): Boolean!
+  deactivateAccount(data: DeactivateInput!): AuthModel!
+  disableTotp: Boolean!
+  enableTotp(input: EnableTotpInput!): Boolean!
+  follow(chanelId: String!): FollowModel!
+  generateStreamToken(input: GenerateStreamTokenInput!): GenerateStreamTokenModel!
+  login(data: LoginInput!): AuthModel!
+  logout: Boolean!
+  removeAvatar: SecureUserModel!
+  removeSession(id: String!): Boolean!
+  removeSocialLink(data: RemoveSocialLinkInput!): Boolean!
+  removeThumbnail: StreamModel!
+  reorderSocialLinks(data: [ReorderSocialLinkInput!]!): [SocialLinkModel!]!
+  resetPassword(data: ResetPasswordInput!): Boolean!
+  sendMessage(data: ChatMessageInput!, streamId: String!): ChatMessageModel!
+  unfollow(chanelId: String!): FollowModel!
+  updateNotificationSetting(input: UpdateNotificationInput!): UpdatedNotificationSettingModel!
+  updatePassword(data: UpdatePasswordInput!): Boolean!
+  updateSocialLink(data: UpdateSocialLinkInput!): SocialLinkModel!
+  verifyAccount(data: VerificationInput!): SecureUserModel!
+}
+
+type NotificationModel {
+  """Дата создания"""
+  createdAt: DateTime!
+
+  """ID уведомления"""
+  id: ID!
+
+  """Статус прочтения уведомления"""
+  isRead: Boolean!
+
+  """Текст уведомления"""
+  text: String!
+
+  """Тип уведомления"""
+  type: NotificationType!
+
+  """Дата обновления"""
+  updatedAt: DateTime!
+
+  """ID пользователя"""
+  userId: String!
+}
+
+type NotificationSettingModel {
+  """Дата создания"""
+  createdAt: DateTime!
+
+  """ID настройки уведомлений"""
+  id: ID!
+
+  """Статус включения уведомлений на сайте"""
+  siteNotificationEnabled: Boolean!
+
+  """Статус включения уведомлений на сайте"""
+  telegramNotificationEnabled: Boolean!
+
+  """Дата обновления"""
+  updatedAt: DateTime!
+
+  """ID пользователя"""
+  userId: String!
+}
+
+"""Тип уведомления"""
+enum NotificationType {
+  ENABLE_TWO_FACTOR
+  NEW_FOLLOWER
+  STREAM_START
+  VERIFIED_CHANNEL
+}
+
+type Query {
+  channelByUsername(username: String!): SecureUserModel!
+  findAllCategories: [CategoryModel!]!
+  findAllStreams(input: FiltersInput!): [StreamModel!]!
+  findCategoryBySlug(slug: String!): CategoryModel!
+  findCurrentSession: SessionModel!
+  findMe: SecureUserModel!
+  findMessagesByStreamId(streamId: String!): [ChatMessageModel!]!
+  findMyFollowers: [FollowModel!]!
+  findMyFollowings: [FollowModel!]!
+  findRandomCategories: [CategoryModel!]!
+  findRandomStreams: [StreamModel!]!
+  findSessionsByUser: [SessionModel!]!
+  findSocialLinksByUser: [SocialLinkModel!]!
+  followersCount(channelId: String!): Float!
+  generateSecret: TotpModel!
+  notificationCount: Float!
+  notificationList: [NotificationModel!]!
+  notificationSetting: NotificationSettingModel!
+  recommendedChannels: [SecureUserModel!]!
+}
+
+input RemoveSocialLinkInput {
+  """id социальной ссылки"""
+  id: String!
+}
+
+input ReorderSocialLinkInput {
+  """id социальной ссылки"""
+  id: String!
+
+  """Порядковый номер"""
+  order: Float!
+}
+
+input ResetPasswordInput {
+  """Email пользователя"""
+  email: String!
+}
+
+type SecureUserModel {
+  """Аватар пользователя"""
+  avatar: String
+
+  """Биография пользователя"""
+  bio: String
+
+  """Сообщения чата пользователя"""
+  chatMessages: [ChatMessageModel!]!
+
+  """Дата создания"""
+  createdAt: DateTime!
+
+  """Дата деактивации пользователя"""
+  deactivatedAt: DateTime
+
+  """Имя пользователя, отображаемое на сайте"""
+  displayName: String!
+
+  """Email пользователя"""
+  email: ID!
+
+  """Подписчики пользователя"""
+  followers: [FollowModel!]!
+
+  """Подписки пользователя"""
+  followings: [FollowModel!]!
+
+  """ID пользователя"""
+  id: ID!
+
+  """Статус деактивации пользователя"""
+  isDeactivated: Boolean!
+
+  """Статус верификации пользователя по почте"""
+  isEmailVerified: Boolean!
+
+  """Статус включения TOTP пользователя (двухфакторная аутентификация)"""
+  isTotpEnabled: Boolean!
+
+  """Статус верификации пользователя"""
+  isVerified: Boolean!
+
+  """Настройки уведомлений пользователя"""
+  notificationSetting: NotificationSettingModel
+
+  """Социальные ссылки пользователя"""
+  socialLinks: [SocialLinkModel!]!
+
+  """Стрим пользователя"""
+  stream: StreamModel
+
+  """ID чата в телеграмме"""
+  telegramChatId: String
+
+  """Секретный ключ TOTP пользователя"""
+  totpSecret: String
+
+  """Дата обновления"""
+  updatedAt: DateTime!
+
+  """Имя пользователя"""
+  username: String!
+}
+
+type SessionMetadataModel {
+  device: DeviceModel!
+  ip: String!
+  location: LocationModel!
+}
+
+type SessionModel {
+  createdAt: String!
+  id: ID!
+  metadata: SessionMetadataModel!
+  userId: String!
+}
+
+type SocialLinkModel {
+  """Дата создания"""
+  createdAt: DateTime!
+  id: ID!
+
+  """Порядковый номер"""
+  order: Float!
+
+  """Название социальной сети"""
+  title: String!
+
+  """Дата обновления"""
+  updatedAt: DateTime!
+
+  """URL социальной сети"""
+  url: String!
+
+  """Пользователь"""
+  user: SecureUserModel!
+}
+
+type StreamModel {
+  """Категория"""
+  category: CategoryModel
+
+  """ID категории"""
+  categoryId: String
+
+  """Сообщения чата"""
+  chatMessages: [ChatMessageModel!]!
+
+  """Дата создания"""
+  createdAt: DateTime!
+  id: ID!
+
+  """ID входного потока для трансляции"""
+  ingressId: String
+
+  """Стрим в прямом эфире"""
+  isLive: Boolean!
+
+  """URL сервера трансляции"""
+  serverUrl: String
+
+  """Ключ потока трансляции"""
+  streamKey: String
+
+  """URL preview стрима"""
+  thumbnailUrl: String
+
+  """Название стрима"""
+  title: String!
+
+  """Дата обновления"""
+  updatedAt: DateTime!
+
+  """Владелец стрима"""
+  user: SecureUserModel!
+
+  """ID владельца стрима"""
+  userId: String!
+}
+
+type Subscription {
+  subscribeChat(streamId: String!): ChatMessageModel!
+}
+
+"""
+Модель TOTP для генерации секретного ключа и QR-кода. Используется для включения TOTP
+"""
+type TotpModel {
+  """QR-код TOTP"""
+  qrCode: String!
+
+  """Секретный ключ TOTP"""
+  secret: String!
+}
+
+input UpdateNotificationInput {
+  """Включены ли уведомления на сайте"""
+  siteNotificationEnabled: Boolean
+
+  """Включены ли уведомления в телеграмме"""
+  telegramNotificationEnabled: Boolean
+}
+
+input UpdatePasswordInput {
+  """Подтверждение нового пароля пользователя"""
+  confirmNewPassword: String!
+
+  """Новый пароль пользователя"""
+  newPassword: String!
+  token: String!
+}
+
+input UpdateSocialLinkInput {
+  """id социальной ссылки"""
+  id: String!
+
+  """Порядковый номер"""
+  order: Float
+
+  """Название ссылки"""
+  title: String
+
+  """URL ссылки"""
+  url: String
+}
+
+type UpdatedNotificationSettingModel {
+  """Токен для верификации в телеграмме"""
+  telegramToken: String!
+
+  """Статус обновления настройки уведомлений"""
+  updated: Boolean!
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
+"""Модель пользователя"""
+type UserModel {
+  """Аватар пользователя"""
+  avatar: String
+
+  """Биография пользователя"""
+  bio: String
+
+  """Сообщения чата пользователя"""
+  chatMessages: [ChatMessageModel!]!
+
+  """Дата создания"""
+  createdAt: DateTime!
+
+  """Дата деактивации пользователя"""
+  deactivatedAt: DateTime
+
+  """Имя пользователя, отображаемое на сайте"""
+  displayName: String!
+
+  """Email пользователя"""
+  email: ID!
+
+  """Подписчики пользователя"""
+  followers: [FollowModel!]!
+
+  """Подписки пользователя"""
+  followings: [FollowModel!]!
+
+  """ID пользователя"""
+  id: ID!
+
+  """Статус деактивации пользователя"""
+  isDeactivated: Boolean!
+
+  """Статус верификации пользователя по почте"""
+  isEmailVerified: Boolean!
+
+  """Статус включения TOTP пользователя (двухфакторная аутентификация)"""
+  isTotpEnabled: Boolean!
+
+  """Статус верификации пользователя"""
+  isVerified: Boolean!
+
+  """Настройки уведомлений пользователя"""
+  notificationSetting: NotificationSettingModel
+
+  """Пароль пользователя"""
+  password: String!
+
+  """Социальные ссылки пользователя"""
+  socialLinks: [SocialLinkModel!]!
+
+  """Стрим пользователя"""
+  stream: StreamModel
+
+  """ID чата в телеграмме"""
+  telegramChatId: String
+
+  """Секретный ключ TOTP пользователя"""
+  totpSecret: String
+
+  """Дата обновления"""
+  updatedAt: DateTime!
+
+  """Имя пользователя"""
+  username: String!
+}
+
+input VerificationInput {
+  token: String!
+}

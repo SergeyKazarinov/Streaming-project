@@ -1,0 +1,47 @@
+import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Stream } from 'prisma/generated/prisma/browser';
+
+import { SecureUserModel } from '@/modules/auth/account/models/user.model';
+import { CategoryModel } from '@/modules/category/model/category.model';
+import { ChatMessageModel } from '@/modules/chat-message/model/chat-message.model';
+
+import { MetaModel } from '@/shared/models/meta.model';
+
+@ObjectType()
+export class StreamModel extends MetaModel implements Stream {
+  @Field(() => ID)
+  id!: string;
+
+  @Field(() => String, { description: 'Название стрима' })
+  title!: string;
+
+  @Field(() => String, { nullable: true, description: 'URL preview стрима' })
+  thumbnailUrl!: Nullable<string>;
+
+  @Field(() => String, { nullable: true, description: 'ID входного потока для трансляции' })
+  ingressId!: Nullable<string>;
+
+  @Field(() => String, { nullable: true, description: 'URL сервера трансляции' })
+  serverUrl!: Nullable<string>;
+
+  @Field(() => String, { nullable: true, description: 'Ключ потока трансляции' })
+  streamKey!: Nullable<string>;
+
+  @Field(() => Boolean, { description: 'Стрим в прямом эфире' })
+  isLive!: boolean;
+
+  @Field(() => SecureUserModel, { description: 'Владелец стрима' })
+  user!: SecureUserModel;
+
+  @Field(() => String, { description: 'ID владельца стрима' })
+  userId!: string;
+
+  @Field(() => String, { nullable: true, description: 'ID категории' })
+  categoryId!: Nullable<string>;
+
+  @Field(() => CategoryModel, { nullable: true, description: 'Категория' })
+  category!: Nullable<CategoryModel>;
+
+  @Field(() => [ChatMessageModel], { description: 'Сообщения чата' })
+  chatMessages?: ChatMessageModel[];
+}

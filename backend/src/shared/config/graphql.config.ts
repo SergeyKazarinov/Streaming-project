@@ -1,0 +1,18 @@
+import type { ApolloDriverConfig } from '@nestjs/apollo';
+import type { ConfigService } from '@nestjs/config';
+import type { Request, Response } from 'express';
+import { join } from 'node:path';
+
+import { isDev } from '../lib/is-dev';
+
+export const getGraphQLConfig = (configService: ConfigService): ApolloDriverConfig => ({
+  graphiql: isDev(configService),
+  path: configService.getOrThrow<string>('GRAPHQL_PREFIX'),
+  autoSchemaFile: join(process.cwd(), 'src/core/graphql/schema.gql'),
+  sortSchema: true,
+  context: ({ req, res }: { req: Request; res: Response }) => ({ req, res }),
+  introspection: true,
+  subscriptions: {
+    'graphql-ws': true,
+  },
+});

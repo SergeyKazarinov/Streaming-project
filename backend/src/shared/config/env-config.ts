@@ -11,6 +11,7 @@ interface EnvConfig {
     databaseUrl: string;
   };
   isDev: boolean;
+  allowedOrigin: string;
 }
 
 export const envConfig = (): EnvConfig => ({
@@ -24,4 +25,5 @@ export const envConfig = (): EnvConfig => ({
     databaseUrl: `postgresql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}/${process.env.POSTGRES_DATABASE}`,
   },
   isDev: process.env.NODE_ENV === 'development',
+  allowedOrigin: process.env.ALLOWED_ORIGINS || '',
 });
