@@ -12,13 +12,20 @@ import { IS_DEV_ENV } from './is-dev';
 
 countries.registerLocale(enLocale);
 
+const getUserIp = (req: Request) => {
+  if (IS_DEV_ENV) return '173.166.164.121';
+
+  if (Array.isArray(req.headers['cf-connecting-ip'])) return req.headers['cf-connecting-ip'][0];
+
+  if (req.headers['cf-connecting-ip']) return req.headers['cf-connecting-ip'];
+
+  if (typeof req.headers['x-forwarded-for'] === 'string') return req.headers['x-forwarded-for'].split(',')[0];
+
+  return req.ip;
+};
+
 export const getSessionMetadata = (req: Request, userAgent: string): SessionMetadata => {
-  const ip = IS_DEV_ENV
-    ? '173.166.164.121'
-    : Array.isArray(req.headers['cf-connecting-ip'])
-      ? req.headers['cf-connecting-ip'][0]
-      : req.headers['cf-connecting-ip'] ||
-        (typeof req.headers['x-forwarded-for'] === 'string' ? req.headers['x-forwarded-for'].split(',')[0] : req.ip);
+  const ip = getUserIp(req);
 
   const device = new DeviceDetector().parse(userAgent);
 
