@@ -2,7 +2,7 @@
 
 Модель описана в `prisma/schema.prisma`. Миграции хранятся в `prisma/migrations/`.
 
-<img width="1280" height="1024" alt="image" src="/backend/docs/streaming-project.svg" alt="Диаграмма БД streaming-project" />
+<img width="1280" height="1024" src="/backend/docs/streaming-project.svg" alt="Диаграмма БД streaming-project" />
 
 Диаграмма — см. [dbdiagram](dbdiagram.md).
 
