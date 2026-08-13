@@ -12,4 +12,5 @@
 
 - [C4-модель — архитектура системы](docs/c4-model/README.md)
 - [Backend — архитектура и устройство проекта](backend/README.md)
+- [Changelog](CHANGELOG.md)
 
